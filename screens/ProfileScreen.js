@@ -10,7 +10,7 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>👤 Mi Perfil</Text>
+      <Text style={styles.titulo}> Mi Perfil</Text>
 
       <Text style={styles.info}>Nombre: {nombre}</Text>
 

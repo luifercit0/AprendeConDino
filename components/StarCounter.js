@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Platform } from "react-native";
 import { ScoreContext } from "../context/ScoreContext";
 
 export default function StarCounter() {
@@ -7,9 +7,8 @@ export default function StarCounter() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>
-        ⭐ {stars}
-      </Text>
+      <Text style={styles.emoji}>⭐</Text>
+      <Text style={styles.text}>{stars}</Text>
     </View>
   );
 }
@@ -17,16 +16,32 @@ export default function StarCounter() {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: 50,
+    // Asegura que no se pegue al notch en dispositivos modernos
+    top: Platform.OS === "ios" ? 60 : 45, 
     right: 20,
-    backgroundColor: "#FFD54F",
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderRadius: 20,
+    backgroundColor: "#FFF9C4", // Amarillo pastel muy suave de fondo
+    borderWidth: 3,
+    borderColor: "#FFD54F", // Borde amarillo fuerte interactivo
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 25,
+    // Efecto de elevación infantil (estilo pegatina/sticker)
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    zIndex: 999, // Asegura que siempre esté por encima del contenido
   },
-
+  emoji: {
+    fontSize: 22,
+    marginRight: 6,
+  },
   text: {
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 22,
+    fontWeight: "900", // Peso extra para que resalte mucho
+    color: "#FF8F00", // Texto café/anaranjado oscuro, más amigable que el negro puro
   },
 });
