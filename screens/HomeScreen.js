@@ -90,7 +90,7 @@ export default function HomeScreen({ navigation }) {
                 onPress={handleSiguientePaso}
                 activeOpacity={0.8}
               >
-                <Text style={styles.textoBoton}>SIGUIENTE ➡️</Text>
+                <Text style={styles.textoBoton}>SIGUIENTE </Text>
               </TouchableOpacity>
             </View>
           )}
