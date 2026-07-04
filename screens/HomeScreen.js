@@ -17,15 +17,13 @@ import DinoHeader from "../components/DinoHeader";
 
 export default function HomeScreen({ navigation }) {
   const { setNombre, setEdad, setDinoElegido } = useContext(UserContext);
-  
+
   const [inputNombre, setInputNombre] = useState("");
   const [inputEdad, setInputEdad] = useState("");
-  
-  // Controla si estamos en el paso 1 (Datos) o paso 2 (Elegir Dino)
+
   const [paso, setPaso] = useState(1);
   const [dinoSeleccionado, setDinoSeleccionado] = useState("dino_verde");
 
-  // Mapeo de los 6 dinos de tu imagen (asegúrate de guardarlos en tus assets)
   const listaDinos = [
     { id: "dino_celeste_cresta", img: require("../assets/dino_celeste_cresta.png"), color: "#E3F2FD" },
     { id: "dino_amarillo", img: require("../assets/dino_amarillo.png"), color: "#FFFDE7" },
@@ -43,12 +41,12 @@ export default function HomeScreen({ navigation }) {
     else setEdad(inputEdad);
 
     Keyboard.dismiss();
-    setPaso(2); // Pasamos a la selección de personaje
+    setPaso(2);
   };
 
   const handleFinalizar = () => {
     setDinoElegido(dinoSeleccionado);
-    navigation.navigate("Menu"); // ¡Nos vamos a jugar!
+    navigation.navigate("Menu");
   };
 
   return (
@@ -60,7 +58,6 @@ export default function HomeScreen({ navigation }) {
         <ScrollView contentContainerStyle={styles.scrollContainer} bounces={false}>
           <DinoHeader />
 
-          {/* VISTA 1: REGISTRO DE DATOS */}
           {paso === 1 && (
             <View style={styles.cardContainer}>
               <Text style={styles.subtitulo}>¿Cómo te llamas?</Text>
@@ -95,13 +92,11 @@ export default function HomeScreen({ navigation }) {
             </View>
           )}
 
-          {/* VISTA 2: SELECCIÓN DEL DINOSAURIO */}
           {paso === 2 && (
             <View style={styles.cardContainer}>
-              <Text style={styles.tituloSeleccion}>¡Elige tu Dino amigo! 🦖</Text>
+              <Text style={styles.tituloSeleccion}>¡Elige tu Dino amigo!</Text>
               <Text style={styles.subtituloSeleccion}>Toca el que más te guste:</Text>
 
-              {/* Grid de 2 columnas para mostrar los 6 dinos */}
               <View style={styles.gridDinos}>
                 {listaDinos.map((dino) => {
                   const esElegido = dinoSeleccionado === dino.id;
@@ -209,7 +204,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "900",
   },
-  // Estilos del selector de personajes
   tituloSeleccion: {
     fontSize: 22,
     fontWeight: "900",
@@ -230,8 +224,8 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   tarjetaDino: {
-    width: "30%", // 3 columnas perfectas
-    aspectRatio: 0.85, // Un pelín más alto que ancho
+    width: "30%",
+    aspectRatio: 0.85,
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
@@ -241,7 +235,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   tarjetaDinoSeleccionada: {
-    borderColor: "#FF9100", // Borde naranja brillante al estar seleccionado
+    borderColor: "#FF9100",
     borderWidth: 4,
     transform: [{ scale: 1.05 }],
   },

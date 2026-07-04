@@ -8,6 +8,7 @@ import {
 
 import DinoHeader from "../components/DinoHeader";
 import StarCounter from "../components/StarCounter";
+import BackToMenuButton from "../components/BackToMenuButton";
 import { ScoreContext } from "../context/ScoreContext";
 
 const preguntas = [
@@ -28,11 +29,11 @@ const preguntas = [
   },
 ];
 
-export default function NumerosScreen() {
+export default function NumerosScreen({ navigation }) {
   const [indice, setIndice] = useState(0);
   const [mensaje, setMensaje] = useState("");
 
-  const { addStar } = useContext(ScoreContext);
+  const { addStar, marcarCompletada } = useContext(ScoreContext);
 
   const pregunta = preguntas[indice];
 
@@ -49,11 +50,15 @@ export default function NumerosScreen() {
     if (indice < preguntas.length - 1) {
       setIndice(indice + 1);
       setMensaje("");
+    } else {
+      marcarCompletada("Numeros");
+      navigation.replace("Felicidades", { tipoJuego: "Numeros" });
     }
   };
 
   return (
     <View style={styles.container}>
+      <BackToMenuButton navigation={navigation} />
       <StarCounter />
 
       <DinoHeader />

@@ -9,6 +9,7 @@ import NumerosScreen from "./screens/NumerosScreen";
 import ColoresScreen from "./screens/ColoresScreen";
 import DinoGameScreen from "./screens/DinoGameScreen";
 import CertificadoScreen from "./screens/CertificadoScreen";
+import FelicidadesScreen from "./screens/FelicidadesScreen";
 import BottomTabs from "./navigation/BottomTabs";
 import { ScoreProvider } from "./context/ScoreContext";
 import { UserProvider } from "./context/UserContext";
@@ -25,41 +26,21 @@ export default function App() {
               headerShown: false,
             }}
           >
-            <Stack.Screen
-              name="Home"
-              component={HomeScreen}
-            />
+            <Stack.Screen name="Home" component={HomeScreen} />
 
-           <Stack.Screen
-             name="Menu"
-             component={BottomTabs}
-/>
-            
+            <Stack.Screen name="Menu" component={BottomTabs} />
 
-            <Stack.Screen
-              name="Letras"
-              component={LetrasScreen}
-            />
+            <Stack.Screen name="Letras" component={LetrasScreen} />
 
-            <Stack.Screen
-              name="Numeros"
-              component={NumerosScreen}
-            />
+            <Stack.Screen name="Numeros" component={NumerosScreen} />
 
-            <Stack.Screen
-              name="Colores"
-              component={ColoresScreen}
-            />
+            <Stack.Screen name="Colores" component={ColoresScreen} />
 
-            <Stack.Screen
-              name="DinoGame"
-              component={DinoGameScreen}
-            />
+            <Stack.Screen name="DinoGame" component={DinoGameScreen} />
 
-            <Stack.Screen
-              name="Certificado"
-              component={CertificadoScreen}
-            />
+            <Stack.Screen name="Certificado" component={CertificadoScreen} />
+
+            <Stack.Screen name="Felicidades" component={FelicidadesScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </ScoreProvider>

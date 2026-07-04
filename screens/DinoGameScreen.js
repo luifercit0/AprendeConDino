@@ -4,18 +4,19 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Image,
-  Animated, // Importamos Animated para darle vida al Dino
+  Animated,
 } from "react-native";
 import { ScoreContext } from "../context/ScoreContext";
 import { UserContext } from "../context/UserContext";
 import StarCounter from "../components/StarCounter";
+import BackToMenuButton from "../components/BackToMenuButton";
 
-export default function DinoGameScreen() {
-  const { addStar } = useContext(ScoreContext);
-  const { dinoElegido, nombre } = useContext(UserContext); 
+const META_ACIERTOS = 6;
 
-  // --- MECÁNICA DE COGNICIÓN: El antojo de Dino ---
+export default function DinoGameScreen({ navigation }) {
+  const { addStar, marcarCompletada } = useContext(ScoreContext);
+  const { dinoElegido, nombre } = useContext(UserContext);
+
   const frutas = [
     { emoji: "🍎", nombre: "Manzana" },
     { emoji: "🍌", nombre: "Plátano" },
@@ -23,12 +24,12 @@ export default function DinoGameScreen() {
     { emoji: "🍇", nombre: "Uvas" },
   ];
 
-  // Dino inicia queriendo una Manzana
   const [frutaAntojo, setFrutaAntojo] = useState(frutas[0]);
+  const [aciertos, setAciertos] = useState(0);
+  const [bloqueado, setBloqueado] = useState(false);
   const [burbujaTexto, setBurbujaTexto] = useState(`¡Hola ${nombre}! Tengo antojo de una ${frutas[0].nombre} ${frutas[0].emoji}`);
 
-  // --- ANIMACIÓN: Escala del Dino ---
-  const escalaDino = useRef(new Animated.Value(1)).current; // Valor inicial 1 (tamaño normal)
+  const escalaDino = useRef(new Animated.Value(1)).current;
 
   const imagenesDinos = {
     dino_celeste_cresta: require("../assets/dino_celeste_cresta.png"),
@@ -39,61 +40,80 @@ export default function DinoGameScreen() {
     dino_chocolate: require("../assets/dino_chocolate.jpg"),
   };
 
-  const alimentarA_Dino = (frutaSeleccionada) => {
-    // 1. Ejecutar animación de "masticar/brincar" (Se encoge un poquito y luego se agranda)
+  const animarDino = () => {
     Animated.sequence([
       Animated.timing(escalaDino, { toValue: 0.85, duration: 100, useNativeDriver: true }),
       Animated.spring(escalaDino, { toValue: 1.2, friction: 3, tension: 40, useNativeDriver: true }),
       Animated.timing(escalaDino, { toValue: 1, duration: 150, useNativeDriver: true })
     ]).start();
+  };
 
-    // 2. Verificar si le dio la fruta que quería
+  const pedirOtraFruta = () => {
+    const siguienteFruta = frutas[Math.floor(Math.random() * frutas.length)];
+    setFrutaAntojo(siguienteFruta);
+    setBurbujaTexto(`¡Ya digerí la comida! Ahora tengo antojo de: ${siguienteFruta.nombre} ${siguienteFruta.emoji}`);
+    setBloqueado(false);
+  };
+
+  const alimentarA_Dino = (frutaSeleccionada) => {
+    if (bloqueado) {
+      return;
+    }
+
+    setBloqueado(true);
+    animarDino();
+
     if (frutaSeleccionada.nombre === frutaAntojo.nombre) {
-      addStar(); // Gana su estrella normal (puedes llamar addStar dos veces si quieres premio doble)
+      const nuevosAciertos = aciertos + 1;
+      setAciertos(nuevosAciertos);
+      addStar();
       setBurbujaTexto(`¡Siii! ¡Le atinaste, ${nombre}! Me fascinan las ${frutaSeleccionada.nombre}s 😋`);
+
+      if (nuevosAciertos >= META_ACIERTOS) {
+        marcarCompletada("DinoGame");
+        setTimeout(() => {
+          navigation.replace("Felicidades", { tipoJuego: "DinoGame" });
+        }, 1200);
+        return;
+      }
     } else {
-      addStar(); // Igual lo premiamos porque es prekínder y alimentó al Dino, ¡no queremos frustración!
+      addStar();
       setBurbujaTexto(`¡Gracias! La ${frutaSeleccionada.nombre} está rica, pero yo buscaba una ${frutaAntojo.nombre} 🤭`);
     }
 
-    // 3. Después de un rato, Dino cambia de antojo aleatoriamente para mantener el juego activo
-    setTimeout(() => {
-      const siguienteFruta = frutas[Math.floor(Math.random() * frutas.length)];
-      setFrutaAntojo(siguienteFruta);
-      setBurbujaTexto(`¡Ya digerí la comida! Ahora tengo antojo de: ${siguienteFruta.nombre} ${siguienteFruta.emoji}`);
-    }, 3000);
+    setTimeout(pedirOtraFruta, 1800);
   };
 
   return (
     <View style={styles.container}>
+      <BackToMenuButton navigation={navigation} />
       <StarCounter />
 
       <Text style={styles.titulo}>Alimenta a tu Dino 🌳</Text>
+      <Text style={styles.puntos}>⭐ {aciertos} / {META_ACIERTOS}</Text>
 
       <View style={styles.personajeContainer}>
-        {/* Burbuja de diálogo */}
         <View style={styles.burbuja}>
           <Text style={styles.burbujaTexto}>{burbujaTexto}</Text>
           <View style={styles.burbujaFlecha} />
         </View>
-        
-        {/* REEMPLAZAMOS Image POR Animated.Image PARA EL EFECTO DE BRINCO */}
-        <Animated.Image 
-          source={imagenesDinos[dinoElegido] || imagenesDinos["dino_verde"]} 
-          style={[styles.dinoImagen, { transform: [{ scale: escalaDino }] }]} 
+
+        <Animated.Image
+          source={imagenesDinos[dinoElegido] || imagenesDinos["dino_verde"]}
+          style={[styles.dinoImagen, { transform: [{ scale: escalaDino }] }]}
         />
       </View>
 
       <Text style={styles.instruccion}>¡Dale la fruta que Dino está pidiendo!</Text>
 
-      {/* Plato de frutas */}
       <View style={styles.platoFrutas}>
         {frutas.map((fruta, index) => (
           <TouchableOpacity
             key={index}
-            style={styles.botonFruta}
+            style={[styles.botonFruta, bloqueado && styles.botonBloqueado]}
             onPress={() => alimentarA_Dino(fruta)}
             activeOpacity={0.6}
+            disabled={bloqueado}
           >
             <Text style={styles.frutaEmoji}>{fruta.emoji}</Text>
           </TouchableOpacity>
@@ -106,7 +126,7 @@ export default function DinoGameScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#E8F5E9", 
+    backgroundColor: "#E8F5E9",
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 20,
@@ -114,15 +134,21 @@ const styles = StyleSheet.create({
   titulo: {
     fontSize: 26,
     fontWeight: "900",
-    color: "#2E7D32", 
-    marginBottom: 10,
+    color: "#2E7D32",
+    marginBottom: 4,
     marginTop: 40,
+  },
+  puntos: {
+    fontSize: 16,
+    fontWeight: "900",
+    color: "#FF8F00",
+    marginBottom: 6,
   },
   personajeContainer: {
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 15,
-    height: 300, 
+    height: 300,
   },
   dinoImagen: {
     width: 210,
@@ -157,7 +183,7 @@ const styles = StyleSheet.create({
     borderRightWidth: 10,
     borderRightColor: "transparent",
     borderTopWidth: 10,
-    borderTopColor: "#FFFFFF", 
+    borderTopColor: "#FFFFFF",
   },
   instruccion: {
     fontSize: 16,
@@ -186,6 +212,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderBottomWidth: 4,
     borderBottomColor: "#C5E1A5",
+  },
+  botonBloqueado: {
+    opacity: 0.5,
   },
   frutaEmoji: {
     fontSize: 36,

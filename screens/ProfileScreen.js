@@ -9,7 +9,6 @@ export default function ProfileScreen() {
   const { nombre, edad, dinoElegido } = useContext(UserContext);
   const { stars } = useContext(ScoreContext);
 
-  // Mapeo idéntico de imágenes para renderizar el Dino correcto que se guardó en el contexto
   const imagenesDinos = {
     dino_celeste_cresta: require("../assets/dino_celeste_cresta.png"),
     dino_amarillo: require("../assets/dino_amarillo.png"),
@@ -19,15 +18,14 @@ export default function ProfileScreen() {
     dino_chocolate: require("../assets/dino_chocolate.jpg"),
   };
 
-  // Determinar rango, medalla emoji y color de acento según estrellas
   let rango = "Explorador ";
-  let colorRango = "#2196F3"; // Azul
+  let colorRango = "#2196F3";
   if (stars >= 5 && stars < 15) {
     rango = "Aventurero";
-    colorRango = "#FF9800"; // Naranja
+    colorRango = "#FF9800";
   } else if (stars >= 15) {
     rango = "Maestro Dino ";
-    colorRango = "#4CAF50"; // Verde
+    colorRango = "#4CAF50";
   }
 
   return (
@@ -36,28 +34,22 @@ export default function ProfileScreen() {
 
       <Text style={styles.titulo}>Mi Perfil de Explorador</Text>
 
-      {/* TARJETA PRINCIPAL (Estilo Carnet Oficial) */}
       <View style={styles.tarjetaPerfil}>
-        
-        {/* Contenedor del Avatar (El Dino elegido por el niño) */}
         <View style={[styles.avatarContainer, { backgroundColor: colorRango + "15" }]}>
-          <Image 
-            source={imagenesDinos[dinoElegido] || imagenesDinos["dino_verde"]} 
-            style={styles.avatarDino} 
+          <Image
+            source={imagenesDinos[dinoElegido] || imagenesDinos["dino_verde"]}
+            style={styles.avatarDino}
           />
         </View>
 
-        {/* Nombre del Niño en letras gigantes */}
         <Text style={styles.nombreTexto}>{nombre}</Text>
-        
-        {/* Edad en formato de etiqueta divertida */}
+
         <View style={styles.etiquetaEdad}>
           <Text style={styles.etiquetaEdadTexto}>🎉 {edad} añitos</Text>
         </View>
 
         <View style={styles.divisor} />
 
-        {/* Sección de Logros (Estrellas acumuladas) */}
         <View style={styles.filaLogro}>
           <Text style={styles.estrellaIcono}>⭐</Text>
           <View style={styles.infoLogroTexto}>
@@ -66,11 +58,9 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* Insignia del Rango Dinámico */}
         <View style={[styles.insigniaRango, { backgroundColor: colorRango }]}>
           <Text style={styles.textoRango}>{rango}</Text>
         </View>
-
       </View>
     </ScrollView>
   );
@@ -79,7 +69,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
-    backgroundColor: "#E8F9FD", // Manteniendo tu fondo pastel original pero optimizado para scroll
+    backgroundColor: "#E8F9FD",
     alignItems: "center",
     paddingHorizontal: 20,
     paddingBottom: 40,

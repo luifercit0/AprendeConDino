@@ -1,6 +1,6 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Ionicons } from "@expo/vector-icons"; // Viene por defecto en Expo
+import { Ionicons } from "@expo/vector-icons";
 import MenuScreen from "../screens/MenuScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 
@@ -11,7 +11,7 @@ export default function BottomTabs() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarShowLabel: false, // Ocultamos el texto para enfocar en lo visual
+        tabBarShowLabel: false,
         tabBarStyle: {
           position: "absolute",
           bottom: 20,
@@ -20,13 +20,13 @@ export default function BottomTabs() {
           backgroundColor: "#FFFFFF",
           borderRadius: 30,
           height: 70,
-          elevation: 5, // Sombra en Android
-          shadowColor: "#000", // Sombra en iOS
+          elevation: 5,
+          shadowColor: "#000",
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.1,
           shadowRadius: 8,
-          borderTopWidth: 0, // Quitamos la línea gris aburrida
-          paddingBottom: 0, 
+          borderTopWidth: 0,
+          paddingBottom: 0,
         },
         tabBarIcon: ({ focused }) => {
           let iconName;
@@ -34,10 +34,10 @@ export default function BottomTabs() {
 
           if (route.name === "Menú") {
             iconName = focused ? "home" : "home-outline";
-            iconColor = focused ? "#FF5722" : "#B0BEC5"; // Naranja brillante vs Gris
+            iconColor = focused ? "#FF5722" : "#B0BEC5";
           } else if (route.name === "Perfil") {
             iconName = focused ? "person" : "person-outline";
-            iconColor = focused ? "#4CAF50" : "#B0BEC5"; // Verde brillante vs Gris
+            iconColor = focused ? "#4CAF50" : "#B0BEC5";
           }
 
           return <Ionicons name={iconName} size={32} color={iconColor} />;

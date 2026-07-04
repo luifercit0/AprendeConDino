@@ -5,56 +5,69 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  ImageBackground,
+  Image,
 } from "react-native";
-import StarCounter from "../components/StarCounter"; // Muestra las estrellas acumuladas del niño
+import StarCounter from "../components/StarCounter";
+
+const botonPixel = require("../assets/botonPixel.png");
+const botonLPixel = require("../assets/botonLPixel.png");
 
 export default function MenuScreen({ navigation }) {
-  
-  // Definimos las tarjetas del menú con colores vibrantes e individuales
   const opcionesMenu = [
-    { id: "letras", titulo: "Letras", icono: "🔤", ruta: "Letras", color: "#FF5722", baseColor: "#E64A19" }, // Naranja
-    { id: "numeros", titulo: "Números", icono: "🔢", ruta: "Numeros", color: "#2196F3", baseColor: "#1976D2" }, // Azul
-    { id: "colores", titulo: "Colores", icono: "🎨", ruta: "Colores", color: "#9C27B0", baseColor: "#7B1FA2" }, // Morado
-    { id: "dino", titulo: "Juego Dino", icono: "🎮", ruta: "DinoGame", color: "#4CAF50", baseColor: "#388E3C" }, // Verde
+    { id: "letras", titulo: "Letras", icono: require("../assets/letrasIcon.png"), ruta: "Letras" },
+    { id: "numeros", titulo: "Números", icono: require("../assets/numerosIcon.png"), ruta: "Numeros" },
+    { id: "colores", titulo: "Colores", icono: require("../assets/coloresIcon.png"), ruta: "Colores" },
+    { id: "dino", titulo: "Juego Dino", icono: require("../assets/dinoIcon.png"), ruta: "DinoGame" },
   ];
 
   return (
     <View style={styles.container}>
-      {/* Contador de estrellas superior */}
       <StarCounter />
 
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        
         <Text style={styles.titulo}>¿Qué quieres aprender hoy?</Text>
 
-        {/* Contenedor en cuadrícula (Grid) de 2 columnas para los juegos */}
         <View style={styles.gridContainer}>
           {opcionesMenu.map((item) => (
             <TouchableOpacity
               key={item.id}
-              style={[
-                styles.tarjetaBoton, 
-                { backgroundColor: item.color, borderBottomColor: item.baseColor }
-              ]}
+              style={styles.tarjetaBoton}
               onPress={() => navigation.navigate(item.ruta)}
               activeOpacity={0.85}
             >
-              <Text style={styles.iconoTarjeta}>{item.icono}</Text>
-              <Text style={styles.textoTarjeta}>{item.titulo}</Text>
+              <ImageBackground
+                source={botonPixel}
+                resizeMode="stretch"
+                style={styles.fondoTarjeta}
+                imageStyle={styles.imagenTarjeta}
+              >
+                <Image source={item.icono} style={styles.iconoTarjeta} resizeMode="contain" />
+                <Text style={styles.textoTarjeta}>{item.titulo}</Text>
+              </ImageBackground>
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* Botón especial inferior para el Certificado (ocupa todo el ancho disponible) */}
         <TouchableOpacity
-          style={[styles.botonCertificado, { backgroundColor: "#FFC107", borderBottomColor: "#FFA000" }]}
+          style={styles.botonCertificado}
           onPress={() => navigation.navigate("Certificado")}
           activeOpacity={0.85}
         >
-          <Text style={styles.iconoCertificado}>🏆</Text>
-          <Text style={styles.textoCertificado}>¡Mi Certificado!</Text>
+          <ImageBackground
+            source={botonLPixel}
+            resizeMode="stretch"
+            style={styles.fondoCertificado}
+            imageStyle={styles.imagenCertificado}
+          >
+            <Image
+              source={require("../assets/certificadoIcon.png")}
+              style={styles.iconoCertificado}
+              resizeMode="contain"
+            />
+            <Text style={styles.textoCertificado}>¡Mi Certificado!</Text>
+          </ImageBackground>
         </TouchableOpacity>
-
       </ScrollView>
     </View>
   );
@@ -63,12 +76,12 @@ export default function MenuScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFDE7", // Un amarillo pastel muy sutil y cálido
+    backgroundColor: "#FFFDE7",
   },
   scrollContainer: {
-    paddingTop: 100, // Espacio para que no choque con el StarCounter
+    paddingTop: 100,
     paddingHorizontal: 20,
-    paddingBottom: 100, // Espacio inferior para que el BottomTabs flotante no tape contenido
+    paddingBottom: 100,
     alignItems: "center",
   },
   titulo: {
@@ -86,21 +99,25 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   tarjetaBoton: {
-    width: "46%", // Permite que queden dos botones por fila con espacio en medio
-    aspectRatio: 1, // Hace que los botones sean perfectamente cuadrados
-    borderRadius: 25,
+    width: "46%",
+    aspectRatio: 1,
+    marginBottom: 20,
+    elevation: 6,
+    shadowColor: "#000",
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 0,
+  },
+  fondoTarjeta: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 20,
-    borderBottomWidth: 6, // Efecto 3D de bloque de juguete
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
+    padding: 12,
   },
+  imagenTarjeta: {},
   iconoTarjeta: {
-    fontSize: 45,
+    width: 56,
+    height: 56,
     marginBottom: 8,
   },
   textoTarjeta: {
@@ -108,29 +125,34 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "900",
     textAlign: "center",
+    textShadowColor: "rgba(0, 0, 0, 0.35)",
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 0,
   },
   botonCertificado: {
-    flexDirection: "row",
     width: "100%",
     height: 70,
-    borderRadius: 25,
+    marginTop: 10,
+  },
+  fondoCertificado: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 10,
-    borderBottomWidth: 6, // Efecto 3D
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
+    flexDirection: "row",
+    paddingHorizontal: 20,
   },
+  imagenCertificado: {},
   iconoCertificado: {
-    fontSize: 32,
+    width: 40,
+    height: 40,
     marginRight: 12,
   },
   textoCertificado: {
     color: "#FFFFFF",
     fontSize: 22,
     fontWeight: "900",
+    textShadowColor: "rgba(0, 0, 0, 0.35)",
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 0,
   },
 });
