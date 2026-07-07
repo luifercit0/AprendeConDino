@@ -15,10 +15,10 @@ const botonLPixel = require("../assets/botonLPixel.png");
 
 export default function MenuScreen({ navigation }) {
   const opcionesMenu = [
-    { id: "letras", titulo: "Letras", icono: require("../assets/letrasIcon.png"), ruta: "Letras" },
-    { id: "numeros", titulo: "Números", icono: require("../assets/numerosIcon.png"), ruta: "Numeros" },
-    { id: "colores", titulo: "Colores", icono: require("../assets/coloresIcon.png"), ruta: "Colores" },
-    { id: "dino", titulo: "Juego Dino", icono: require("../assets/dinoIcon.png"), ruta: "DinoGame" },
+    { id: "letras", titulo: "Letras", icono: require("../assets/letrasIcon.png"), ruta: "Letras", colorFondo: "#1976D2" }, // Azul
+    { id: "numeros", titulo: "Números", icono: require("../assets/numerosIcon.png"), ruta: "Numeros", colorFondo: "#FFC107" }, // Amarillo
+    { id: "colores", titulo: "Colores", icono: require("../assets/coloresIcon.png"), ruta: "Colores", colorFondo: "#00796B" }, // Verde azulado
+    { id: "dino", titulo: "Juego Dino", icono: require("../assets/dinoIcon.png"), ruta: "DinoGame", colorFondo: "#4CAF50" }, // Verde
   ];
 
   return (
@@ -36,15 +36,20 @@ export default function MenuScreen({ navigation }) {
               onPress={() => navigation.navigate(item.ruta)}
               activeOpacity={0.85}
             >
-              <ImageBackground
-                source={botonPixel}
-                resizeMode="stretch"
-                style={styles.fondoTarjeta}
-                imageStyle={styles.imagenTarjeta}
-              >
-                <Image source={item.icono} style={styles.iconoTarjeta} resizeMode="contain" />
-                <Text style={styles.textoTarjeta}>{item.titulo}</Text>
-              </ImageBackground>
+              {/* Contenedor extra para aplicar el color base de fondo alegre */}
+              <View style={[styles.contenedorFondoColor, { backgroundColor: item.colorFondo }]}>
+                <ImageBackground
+                  source={botonPixel}
+                  resizeMode="stretch"
+                  style={styles.fondoTarjeta}
+                  // La opacidad (0.45) permite que el color base de atrás se fusione 
+                  // con las sombras y relieves grises del botón pixelado original.
+                  imageStyle={[styles.imagenTarjeta, { opacity: 0.45, tintColor: "#212121" }]}
+                >
+                  <Image source={item.icono} style={styles.iconoTarjeta} resizeMode="contain" />
+                  <Text style={styles.textoTarjeta}>{item.titulo}</Text>
+                </ImageBackground>
+              </View>
             </TouchableOpacity>
           ))}
         </View>
@@ -54,19 +59,22 @@ export default function MenuScreen({ navigation }) {
           onPress={() => navigation.navigate("Certificado")}
           activeOpacity={0.85}
         >
-          <ImageBackground
-            source={botonLPixel}
-            resizeMode="stretch"
-            style={styles.fondoCertificado}
-            imageStyle={styles.imagenCertificado}
-          >
-            <Image
-              source={require("../assets/certificadoIcon.png")}
-              style={styles.iconoCertificado}
-              resizeMode="contain"
-            />
-            <Text style={styles.textoCertificado}>¡Mi Certificado!</Text>
-          </ImageBackground>
+          {/* Contenedor para el fondo del botón largo del certificado */}
+          <View style={[styles.contenedorFondoColor, { backgroundColor: "#7B1FA2" }]}>
+            <ImageBackground
+              source={botonLPixel}
+              resizeMode="stretch"
+              style={styles.fondoCertificado}
+              imageStyle={[styles.imagenCertificado, { opacity: 0.45, tintColor: "#212121" }]}
+            >
+              <Image
+                source={require("../assets/certificadoIcon.png")}
+                style={styles.iconoCertificado}
+                resizeMode="contain"
+              />
+              <Text style={styles.textoCertificado}>¡Mi Certificado!</Text>
+            </ImageBackground>
+          </View>
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -108,6 +116,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 0,
   },
+  /* NUEVO: Mantiene el color atrapado dentro de la silueta del botón */
+  contenedorFondoColor: {
+    flex: 1,
+    borderRadius: 12, // Suaviza un poco las esquinas contenedoras si es necesario
+    overflow: "hidden", // Crucial para que el color no se salga de los bordes transparentes
+  },
   fondoTarjeta: {
     flex: 1,
     justifyContent: "center",
@@ -133,6 +147,12 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 70,
     marginTop: 10,
+    // Pasamos la sombra al botón principal en lugar del contenedor interno
+    elevation: 6,
+    shadowColor: "#000",
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 0,
   },
   fondoCertificado: {
     flex: 1,

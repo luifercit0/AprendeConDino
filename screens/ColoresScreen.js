@@ -1,9 +1,11 @@
 import React, { useState, useContext } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ImageBackground, Image } from "react-native";
 import DinoHeader from "../components/DinoHeader";
 import StarCounter from "../components/StarCounter";
 import BackToMenuButton from "../components/BackToMenuButton";
 import { ScoreContext } from "../context/ScoreContext";
+
+const botonLPixel = require("../assets/botonLPixel.png");
 
 export default function ColoresScreen({ navigation }) {
   const { addStar, addFiveStars, marcarCompletada } = useContext(ScoreContext);
@@ -12,23 +14,23 @@ export default function ColoresScreen({ navigation }) {
   const [indicePregunta, setIndicePregunta] = useState(0);
 
   const catalogoColores = [
-    { nombre: "ROJO", hex: "#FF1744", figura: "🔺 Triángulo" },
-    { nombre: "AZUL", hex: "#2979FF", figura: "🟦 Cuadrado" },
-    { nombre: "AMARILLO", hex: "#FFEA00", figura: "🟡 Círculo", textoOscuro: true },
-    { nombre: "VERDE", hex: "#00E676", figura: "💚 Corazón" },
-    { nombre: "NARANJA", hex: "#FF9100", figura: "⭐ Estrella" },
-    { nombre: "MORADO", hex: "#D500F9", figura: "🔷 Rombo" },
-    { nombre: "ROSA", hex: "#FF4081", figura: "🌸 Flor" },
+    { nombre: "ROJO", hex: "#FF1744", imagen: require("../assets/rojo.jpg") },
+    { nombre: "AZUL", hex: "#2979FF", imagen: require("../assets/azul.jpg") },
+    { nombre: "AMARILLO", hex: "#FFEA00", imagen: require("../assets/amarillo.jpg"), textoOscuro: true },
+    { nombre: "VERDE", hex: "#00E676", imagen: require("../assets/verde.jpg") },
+    { nombre: "NARANJA", hex: "#FF9100", imagen: require("../assets/naranja.jpg") },
+    { nombre: "MORADO", hex: "#D500F9", imagen: require("../assets/morado.jpg") },
+    { nombre: "ROSA", hex: "#FF4081", imagen: require("../assets/rosa.jpg") },
   ];
 
   const preguntas = [
-    { correcto: "ROJO", figuraIcono: "🔺", opciones: ["AZUL", "ROJO", "VERDE"] },
-    { correcto: "AZUL", figuraIcono: "🟦", opciones: ["AZUL", "AMARILLO", "ROSA"] },
-    { correcto: "AMARILLO", figuraIcono: "🟡", opciones: ["NARANJA", "MORADO", "AMARILLO"] },
-    { correcto: "VERDE", figuraIcono: "💚", opciones: ["VERDE", "ROJO", "AZUL"] },
-    { correcto: "NARANJA", figuraIcono: "⭐", opciones: ["ROSA", "NARANJA", "MORADO"] },
-    { correcto: "MORADO", figuraIcono: "🔷", opciones: ["AMARILLO", "VERDE", "MORADO"] },
-    { correcto: "ROSA", figuraIcono: "🌸", opciones: ["ROSA", "ROJO", "NARANJA"] },
+    { correcto: "ROJO", opciones: ["AZUL", "ROJO", "VERDE"] },
+    { correcto: "AZUL", opciones: ["AZUL", "AMARILLO", "ROSA"] },
+    { correcto: "AMARILLO", opciones: ["NARANJA", "MORADO", "AMARILLO"] },
+    { correcto: "VERDE", opciones: ["VERDE", "ROJO", "AZUL"] },
+    { correcto: "NARANJA", opciones: ["ROSA", "NARANJA", "MORADO"] },
+    { correcto: "MORADO", opciones: ["AMARILLO", "VERDE", "MORADO"] },
+    { correcto: "ROSA", opciones: ["ROSA", "ROJO", "NARANJA"] },
   ];
 
   const preguntaActual = preguntas[indicePregunta];
@@ -65,7 +67,7 @@ export default function ColoresScreen({ navigation }) {
           <View style={styles.gridGuia}>
             {catalogoColores.map((col, index) => (
               <View key={index} style={styles.itemGuia}>
-                <Text style={styles.emojiGuia}>{col.figura.split(" ")[0]}</Text>
+                <Image source={col.imagen} style={styles.imagenGuia} resizeMode="cover" />
                 <Text style={[styles.textoItemGuia, { color: col.textoOscuro ? "#E65100" : col.hex }]}>
                   {col.nombre}
                 </Text>
@@ -73,12 +75,22 @@ export default function ColoresScreen({ navigation }) {
             ))}
           </View>
 
+          {/* Botón principal con temática pixel */}
           <TouchableOpacity
             style={styles.botonPrincipal}
             onPress={() => setMostrarGuia(false)}
-            activeOpacity={0.8}
+            activeOpacity={0.85}
           >
-            <Text style={styles.textoBotonPrincipal}>¡A JUGAR! 🚀</Text>
+            <View style={[styles.contenedorFondoColor, { backgroundColor: "#4CAF50" }]}>
+              <ImageBackground
+                source={botonLPixel}
+                resizeMode="stretch"
+                style={styles.fondoBotonPrincipal}
+                imageStyle={[{ opacity: 0.45, tintColor: "#212121" }]}
+              >
+                <Text style={styles.textoBotonPrincipal}>¡A JUGAR! 🚀</Text>
+              </ImageBackground>
+            </View>
           </TouchableOpacity>
         </View>
       </View>
@@ -94,8 +106,9 @@ export default function ColoresScreen({ navigation }) {
       <View style={styles.tarjetaCard}>
         <Text style={styles.preguntaTexto}>¿Qué color es este? </Text>
 
-        <View style={[styles.contenedorFiguraJuego, { backgroundColor: datosColorCorrecto.hex }]}>
-          <Text style={styles.figuraJuegoEmoji}>{preguntaActual.figuraIcono}</Text>
+        {/* Imagen grande del color a adivinar */}
+        <View style={styles.contenedorFiguraJuego}>
+          <Image source={datosColorCorrecto.imagen} style={styles.imagenFiguraJuego} resizeMode="cover" />
         </View>
 
         <View style={styles.contenedorOpciones}>
@@ -104,16 +117,24 @@ export default function ColoresScreen({ navigation }) {
             return (
               <TouchableOpacity
                 key={index}
-                style={[
-                  styles.botonOpcion,
-                  { backgroundColor: infoOpcion.hex, borderBottomColor: infoOpcion.textoOscuro ? "#FFB300" : "#00000020" }
-                ]}
+                style={styles.botonOpcion}
                 onPress={() => verificarRespuesta(opcion)}
-                activeOpacity={0.8}
+                activeOpacity={0.85}
               >
-                <Text style={[styles.textoOpcion, infoOpcion.textoOscuro && { color: "#37474F" }]}>
-                  {opcion}
-                </Text>
+                {/* Contenedor pixel: color base + textura botonLPixel */}
+                <View style={[styles.contenedorFondoColor, { backgroundColor: infoOpcion.hex }]}>
+                  <ImageBackground
+                    source={botonLPixel}
+                    resizeMode="stretch"
+                    style={styles.fondoBotonOpcion}
+                    imageStyle={[{ opacity: 0.45, tintColor: "#212121" }]}
+                  >
+                    <Image source={infoOpcion.imagen} style={styles.imagenOpcion} resizeMode="cover" />
+                    <Text style={[styles.textoOpcion, infoOpcion.textoOscuro && { color: "#37474F" }]}>
+                      {opcion}
+                    </Text>
+                  </ImageBackground>
+                </View>
               </TouchableOpacity>
             );
           })}
@@ -180,29 +201,48 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ECEFF1",
   },
-  emojiGuia: {
-    fontSize: 26,
-    marginRight: 8,
+  imagenGuia: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    marginRight: 10,
   },
   textoItemGuia: {
     fontSize: 16,
     fontWeight: "900",
   },
+
+  /* --- Botón principal (pixel) --- */
   botonPrincipal: {
-    backgroundColor: "#4CAF50",
     width: "100%",
-    height: 55,
-    borderRadius: 22,
+    height: 60,
+    elevation: 6,
+    shadowColor: "#000",
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 0,
+  },
+  fondoBotonPrincipal: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderBottomWidth: 5,
-    borderBottomColor: "#388E3C",
   },
   textoBotonPrincipal: {
     color: "#FFFFFF",
     fontSize: 22,
     fontWeight: "900",
+    textShadowColor: "rgba(0, 0, 0, 0.35)",
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 0,
   },
+
+  /* --- Contenedor genérico que atrapa el color dentro de la silueta pixel --- */
+  contenedorFondoColor: {
+    flex: 1,
+    borderRadius: 20,
+    overflow: "hidden",
+  },
+
   preguntaTexto: {
     fontSize: 24,
     fontWeight: "900",
@@ -213,6 +253,7 @@ const styles = StyleSheet.create({
     width: 140,
     height: 140,
     borderRadius: 30,
+    overflow: "hidden",
     justifyContent: "center",
     alignItems: "center",
     elevation: 5,
@@ -221,28 +262,47 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     marginBottom: 25,
   },
-  figuraJuegoEmoji: {
-    fontSize: 70,
+  imagenFiguraJuego: {
+    width: "100%",
+    height: "100%",
   },
   contenedorOpciones: {
     width: "100%",
   },
+
+  /* --- Botones de opciones (pixel) --- */
   botonOpcion: {
     width: "100%",
-    height: 55,
-    borderRadius: 20,
+    height: 58,
+    marginBottom: 12,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 3, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 0,
+  },
+  fondoBotonOpcion: {
+    flex: 1,
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 12,
-    borderBottomWidth: 4,
-    elevation: 3,
+  },
+  imagenOpcion: {
+    width: 34,
+    height: 34,
+    borderRadius: 8,
+    marginRight: 10,
   },
   textoOpcion: {
     color: "#FFFFFF",
     fontSize: 20,
     fontWeight: "900",
     letterSpacing: 1,
+    textShadowColor: "rgba(0, 0, 0, 0.35)",
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 0,
   },
+
   botonSalir: {
     marginTop: 20,
     padding: 10,
