@@ -1,7 +1,8 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
 import { ScoreContext } from "../context/ScoreContext";
 import { UserContext } from "../context/UserContext";
+import LottieView from "lottie-react-native";
 
 const imagenesDinos = {
   dino_celeste_cresta: require("../assets/dino_celeste_cresta.png"),
@@ -26,6 +27,7 @@ export default function FelicidadesScreen({ navigation, route }) {
 
   const mensajePersonalizado = MENSAJES[tipoJuego] || "¡Completaste la actividad!";
   const esPrimerCertificado = todoCompletado && !certificadoObtenido;
+  const celebracionRef = useRef(null);
 
   useEffect(() => {
     if (esPrimerCertificado) {
@@ -37,56 +39,94 @@ export default function FelicidadesScreen({ navigation, route }) {
     }
   }, [esPrimerCertificado]);
 
+  useEffect(() => {
+    celebracionRef.current?.reset();
+    celebracionRef.current?.play();
+  }, []);
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.tarjeta}>
-        <Text style={styles.titulo}>¡Felicidades!</Text>
-        <Text style={styles.subtitulo}>{mensajePersonalizado}</Text>
-
-        <Image
-          source={imagenesDinos[dinoElegido] || imagenesDinos.dino_verde}
-          style={styles.dinoImagen}
-          resizeMode="contain"
+    <View style={styles.container}>
+      {/* Capa de animación por encima con clicks habilitados hacia abajo */}
+      <View pointerEvents="none" style={styles.celebracionContenedor}>
+        <LottieView
+          ref={celebracionRef}
+          source={require("../assets/animations/celebracion.json")}
+          autoPlay={false}
+          loop={false}
+          style={styles.lottieEstilo}
         />
-
-        {esPrimerCertificado ? (
-          <Text style={styles.mensaje}>
-            ¡Completaste todas las actividades!{"\n"}Tu certificado te espera...
-          </Text>
-        ) : (
-          <>
-            <Text style={styles.mensaje}>
-              {huboFallos ? "No te rindas, ¡puedes mejorar!" : "¡Eres un campeón! Sigue así."}
-            </Text>
-
-            <TouchableOpacity
-              style={[styles.boton, styles.botonReintentar]}
-              onPress={() => navigation.replace(tipoJuego)}
-              activeOpacity={0.85}
-            >
-              <Text style={styles.textoBoton}>Intentar de nuevo</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.boton, styles.botonMenu]}
-              onPress={() => navigation.navigate("Menu")}
-              activeOpacity={0.85}
-            >
-              <Text style={styles.textoBoton}>Volver al menú</Text>
-            </TouchableOpacity>
-          </>
-        )}
-
-        <Text style={styles.puntaje}>Estrellas totales: {stars}</Text>
       </View>
-    </ScrollView>
+
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.tarjeta}>
+          <Text style={styles.titulo}>¡Felicidades!</Text>
+          <Text style={styles.subtitulo}>{mensajePersonalizado}</Text>
+
+          {/* 1. Primero el Dinosaurio bien centrado */}
+          <Image
+            source={imagenesDinos[dinoElegido] || imagenesDinos.dino_verde}
+            style={styles.dinoImagen}
+            resizeMode="contain"
+          />
+
+          {/* 2. Ahora evaluamos el mensaje bonito abajo y luego los botones */}
+          {esPrimerCertificado ? (
+            <>
+              <View style={[styles.contenedorMensaje, styles.mensajeCertificado]}>
+                <Text style={styles.iconoMensaje}>🏆</Text>
+                <Text style={styles.textoMensaje}>
+                  ¡Completaste todas las actividades!{"\n"}¡Tu certificado te espera!
+                </Text>
+              </View>
+              {/* Nota: En tu flujo original, si es primer certificado redirige en 2.2 seg, 
+                  pero dejamos espacio por si el usuario llega a interactuar */}
+            </>
+          ) : (
+            <>
+              {/* Caja de mensaje dinámico estilizada */}
+              <View style={[
+                styles.contenedorMensaje, 
+                huboFallos ? styles.mensajeIntento : styles.mensajeGanador
+              ]}>
+                
+                <Text style={styles.textoMensaje}>
+                  {huboFallos ? "¡No te rindas! ¡Practica y lo lograrás!" : "¡Eres un campeón! ¡Lo hiciste increíble!"}
+                </Text>
+              </View>
+
+              {/* Botones de acción justo debajo del mensaje */}
+              <TouchableOpacity
+                style={[styles.boton, styles.botonReintentar]}
+                onPress={() => navigation.replace(tipoJuego)}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.textoBoton}>Intentar de nuevo</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.boton, styles.botonMenu]}
+                onPress={() => navigation.navigate("Menu")}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.textoBoton}>Volver al menú</Text>
+              </TouchableOpacity>
+            </>
+          )}
+
+          <Text style={styles.puntaje}>Estrellas totales: {stars}</Text>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
+    flex: 1,
     backgroundColor: "#FFFDE7",
+  },
+  scrollContainer: {
+    flexGrow: 1,
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
@@ -120,16 +160,42 @@ const styles = StyleSheet.create({
   dinoImagen: {
     width: 180,
     height: 180,
-    marginVertical: 10,
+    marginVertical: 15,
   },
-  mensaje: {
+ 
+  contenedorMensaje: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    padding: 15,
+    borderRadius: 20,
+    marginBottom: 20,
+    borderWidth: 2,
+  },
+  mensajeGanador: {
+    backgroundColor: "#FFF9C4", 
+    borderColor: "#FBC02D",
+  },
+  mensajeIntento: {
+    backgroundColor: "#E1F5FE", 
+    borderColor: "#0288D1",
+  },
+  mensajeCertificado: {
+    backgroundColor: "#E8F5E9", 
+    borderColor: "#388E3C",
+  },
+  iconoMensaje: {
+    fontSize: 28,
+    marginRight: 12,
+  },
+  textoMensaje: {
+    flex: 1,
     fontSize: 16,
     fontWeight: "bold",
-    color: "#546E7A",
-    textAlign: "center",
-    marginBottom: 20,
-    paddingHorizontal: 10,
+    color: "#37474F",
+    lineHeight: 22,
   },
+  // ----------------------------------------------
   boton: {
     width: "100%",
     height: 56,
@@ -153,9 +219,20 @@ const styles = StyleSheet.create({
     fontWeight: "900",
   },
   puntaje: {
-    marginTop: 4,
+    marginTop: 8,
     fontSize: 14,
     fontWeight: "bold",
     color: "#90A4AE",
+  },
+  celebracionContenedor: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    top: 0,
+    left: 0,
+    zIndex: 1,
+  },
+  lottieEstilo: {
+    flex: 1,
   },
 });

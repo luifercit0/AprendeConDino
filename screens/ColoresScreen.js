@@ -111,7 +111,7 @@ export default function ColoresScreen({ navigation }) {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: "#E3F2FD" }]}>
+    <View style={[styles.container, { backgroundColor: "#B8E0D2" }]}>
       <BackToMenuButton navigation={navigation} />
       <StarCounter />
       <DinoHeader />
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   tarjetaCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#ffffff",
     width: "100%",
     borderRadius: 35,
     padding: 20,

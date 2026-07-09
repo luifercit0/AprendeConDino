@@ -87,7 +87,7 @@ export default function NumerosScreen({ navigation }) {
             onPress={() => verificar(opcion)}
             activeOpacity={0.85}
           >
-            <View style={[styles.contenedorFondoColor, { backgroundColor: "#FFB74D" }]}>
+            <View style={[styles.contenedorFondoColor, { backgroundColor: "#69c9fc" }]}>
               <ImageBackground
                 source={botonLPixel}
                 resizeMode="stretch"
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FFF8E1",
+    backgroundColor: "#bcddf4",
     paddingHorizontal: 20,
   },
   imagen: {
