@@ -1,41 +1,65 @@
 import React, { useState, useContext, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, 
-        Platform, TouchableWithoutFeedback, Keyboard, ScrollView, Image, ActivityIndicator,} from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+  ScrollView,
+  Image,
+  ActivityIndicator,
+} from "react-native";
 import { UserContext } from "../context/UserContext";
 import DinoHeader from "../components/DinoHeader";
 
+const listaDinos = [
+  { id: "dino_celeste_cresta", img: require("../assets/dino_celeste_cresta.png"), color: "#E3F2FD" },
+  { id: "dino_amarillo", img: require("../assets/dino_amarillo.png"), color: "#FFFDE7" },
+  { id: "dino_triceratops", img: require("../assets/dino_triceratops.png"), color: "#FFE0B2" },
+  { id: "dino_verde", img: require("../assets/dino_verde.png"), color: "#E8F5E9" },
+  { id: "dino_azul_cuello", img: require("../assets/dino_azul_cuello.png"), color: "#E0F7FA" },
+  { id: "dino_chocolate", img: require("../assets/dino_chocolate.jpg"), color: "#E0F2F1" },
+];
+
 export default function HomeScreen({ navigation }) {
-  const { nombre, edad, dinoElegido, jugadorId, ultimoPuntaje, cargando, registrarJugador,} = useContext(UserContext);
+  const {
+    nombre,
+    ultimoPuntaje,
+    jugadorId,
+    cargando,
+    registrarJugador,
+    iniciarSesion,
+  } = useContext(UserContext);
+
+  const [modo, setModo] = useState("inicio");
 
   const [inputNombre, setInputNombre] = useState("");
   const [inputEdad, setInputEdad] = useState("");
-
-  const [paso, setPaso] = useState(1);
   const [dinoSeleccionado, setDinoSeleccionado] = useState("dino_verde");
+
+  const [errorLogin, setErrorLogin] = useState("");
+  const [buscando, setBuscando] = useState(false);
 
   useEffect(() => {
     if (!cargando && jugadorId) {
-      setInputNombre(nombre);
-      setInputEdad(edad);
-      setDinoSeleccionado(dinoElegido);
+      setModo("bienvenida");
     }
   }, [cargando, jugadorId]);
 
-  const listaDinos = [
-    { id: "dino_celeste_cresta", img: require("../assets/dino_celeste_cresta.png"), color: "#E3F2FD" },
-    { id: "dino_amarillo", img: require("../assets/dino_amarillo.png"), color: "#FFFDE7" },
-    { id: "dino_triceratops", img: require("../assets/dino_triceratops.png"), color: "#FFE0B2" },
-    { id: "dino_verde", img: require("../assets/dino_verde.png"), color: "#E8F5E9" },
-    { id: "dino_azul_cuello", img: require("../assets/dino_azul_cuello.png"), color: "#E0F7FA" },
-    { id: "dino_chocolate", img: require("../assets/dino_chocolate.jpg"), color: "#E0F2F1" },
-  ];
-
-  const handleSiguientePaso = () => {
-    Keyboard.dismiss();
-    setPaso(2);
+  const handleContinuarBienvenida = () => {
+    navigation.navigate("Menu");
   };
 
-  const handleFinalizar = async () => {
+  const handleSiguienteRegistro = () => {
+    Keyboard.dismiss();
+    setModo("registro-dino");
+  };
+
+  const handleFinalizarRegistro = async () => {
     const nombreFinal = inputNombre.trim() === "" ? "Amiguito" : inputNombre;
     const edadFinal = inputEdad.trim() === "" ? "4" : inputEdad;
 
@@ -43,9 +67,32 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate("Menu");
   };
 
-  // ✅ Función para usuarios existentes
-  const handleContinuar = () => {
-    navigation.navigate("Menu");
+  const handleLogin = async () => {
+    if (inputNombre.trim() === "" || inputEdad.trim() === "") {
+      setErrorLogin("Escribe tu nombre y tu edad para entrar.");
+      return;
+    }
+
+    setErrorLogin("");
+    setBuscando(true);
+
+    const encontrado = await iniciarSesion(inputNombre, inputEdad, dinoSeleccionado);
+
+    setBuscando(false);
+
+    if (encontrado) {
+      navigation.navigate("Menu");
+    } else {
+      setErrorLogin("No encontramos esa Dino cuenta. Revisa tu nombre, tu edad y el dino que elegiste.");
+    }
+  };
+
+  const volverAlInicio = () => {
+    setErrorLogin("");
+    setInputNombre("");
+    setInputEdad("");
+    setDinoSeleccionado("dino_verde");
+    setModo("inicio");
   };
 
   if (cargando) {
@@ -56,55 +103,6 @@ export default function HomeScreen({ navigation }) {
     );
   }
 
-  // Si el usuario existe solo continuar, como un checkpoint
-  if (jugadorId) {
-    const dinoData = listaDinos.find(d => d.id === dinoElegido);
-    
-    return (
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={styles.container}
-        >
-          <ScrollView contentContainerStyle={styles.scrollContainer} bounces={false}>
-            <DinoHeader />
-
-            <View style={styles.cardContainer}>
-              <View style={styles.bannerBienvenida}>
-                <Text style={styles.textoBienvenidaGrande}>
-                  ¡Hola de nuevo, {nombre}!
-                </Text>
-                <Text style={styles.textoBienvenida}>
-                  Tu último puntaje fue {ultimoPuntaje}
-                </Text>
-                {dinoData && (
-                  <View style={styles.dinoMiniContainer}>
-                    <Image 
-                      source={dinoData.img} 
-                      style={styles.dinoMini} 
-                    />
-                    <Text style={styles.dinoMiniTexto}>
-                      ¡Tu dino te espera!
-                    </Text>
-                  </View>
-                )}
-              </View>
-
-              <TouchableOpacity
-                style={styles.botonContinuar}
-                onPress={handleContinuar}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.textoBoton}>¡CONTINUAR!</Text>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </TouchableWithoutFeedback>
-    );
-  }
-
-  // Si el usuario es nuevo, mostrar el formulario
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView
@@ -114,9 +112,45 @@ export default function HomeScreen({ navigation }) {
         <ScrollView contentContainerStyle={styles.scrollContainer} bounces={false}>
           <DinoHeader />
 
-          {paso === 1 && (
+          {modo === "bienvenida" && (
             <View style={styles.cardContainer}>
-              <Text style={styles.tituloBienvenida}>¡Bienvenido!</Text>
+              <Text style={styles.subtitulo}>¡Hola de nuevo, {nombre}!</Text>
+              <Text style={styles.textoPuntaje}>Tu último puntaje fue {ultimoPuntaje} ⭐</Text>
+
+              <TouchableOpacity
+                style={styles.botonJugar}
+                onPress={handleContinuarBienvenida}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.textoBoton}>¡SEGUIR JUGANDO! 🚀</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {modo === "inicio" && (
+            <View style={styles.cardContainer}>
+              <Text style={styles.subtitulo}>¿Ya tienes una Dino cuenta?</Text>
+
+              <TouchableOpacity
+                style={styles.botonSiguiente}
+                onPress={() => setModo("registro-datos")}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.textoBoton}>¡Soy nuevo! 🆕</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.botonJugar}
+                onPress={() => setModo("login")}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.textoBoton}>Ya tengo mi Dino 🦕</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {modo === "registro-datos" && (
+            <View style={styles.cardContainer}>
               <Text style={styles.subtitulo}>¿Cómo te llamas?</Text>
               <TextInput
                 style={styles.input}
@@ -141,15 +175,19 @@ export default function HomeScreen({ navigation }) {
 
               <TouchableOpacity
                 style={styles.botonSiguiente}
-                onPress={handleSiguientePaso}
+                onPress={handleSiguienteRegistro}
                 activeOpacity={0.8}
               >
-                <Text style={styles.textoBoton}>SIGUIENTE ➜</Text>
+                <Text style={styles.textoBoton}>SIGUIENTE</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.botonVolver} onPress={volverAlInicio}>
+                <Text style={styles.textoVolver}>‹ Volver</Text>
               </TouchableOpacity>
             </View>
           )}
 
-          {paso === 2 && (
+          {modo === "registro-dino" && (
             <View style={styles.cardContainer}>
               <Text style={styles.tituloSeleccion}>¡Elige tu Dino amigo!</Text>
               <Text style={styles.subtituloSeleccion}>Toca el que más te guste:</Text>
@@ -176,10 +214,79 @@ export default function HomeScreen({ navigation }) {
 
               <TouchableOpacity
                 style={styles.botonJugar}
-                onPress={handleFinalizar}
+                onPress={handleFinalizarRegistro}
                 activeOpacity={0.8}
               >
                 <Text style={styles.textoBoton}>¡VAMOS A JUGAR! 🚀</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.botonVolver} onPress={() => setModo("registro-datos")}>
+                <Text style={styles.textoVolver}>‹ Volver</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {modo === "login" && (
+            <View style={styles.cardContainer}>
+              <Text style={styles.subtitulo}>¿Cómo te llamas?</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Escribe tu nombre..."
+                placeholderTextColor="#90A4AE"
+                value={inputNombre}
+                onChangeText={setInputNombre}
+                maxLength={12}
+                autoCapitalize="words"
+              />
+
+              <Text style={styles.subtitulo}>¿Cuántos años tienes?</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Escribe tu edad..."
+                placeholderTextColor="#90A4AE"
+                value={inputEdad}
+                onChangeText={setInputEdad}
+                maxLength={2}
+                keyboardType="number-pad"
+              />
+
+              <Text style={styles.tituloSeleccion}>¿Cuál era tu Dino?</Text>
+
+              <View style={styles.gridDinos}>
+                {listaDinos.map((dino) => {
+                  const esElegido = dinoSeleccionado === dino.id;
+                  return (
+                    <TouchableOpacity
+                      key={dino.id}
+                      style={[
+                        styles.tarjetaDino,
+                        { backgroundColor: dino.color },
+                        esElegido && styles.tarjetaDinoSeleccionada,
+                      ]}
+                      onPress={() => setDinoSeleccionado(dino.id)}
+                      activeOpacity={0.7}
+                    >
+                      <Image source={dino.img} style={styles.imagenDino} />
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+
+              {errorLogin ? <Text style={styles.textoError}>{errorLogin}</Text> : null}
+
+              <TouchableOpacity
+                style={styles.botonJugar}
+                onPress={handleLogin}
+                activeOpacity={0.8}
+                disabled={buscando}
+              >
+                <Text style={styles.textoBoton}>
+                  {buscando ? "Buscando..." : "ENTRAR 🔑"}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.botonVolver} onPress={volverAlInicio}>
+                <Text style={styles.textoVolver}>‹ Volver</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -200,45 +307,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  bannerBienvenida: {
-    backgroundColor: "#E8F5E9",
-    borderRadius: 18,
-    padding: 20,
-    width: "100%",
-    marginBottom: 15,
-    borderWidth: 2,
-    borderColor: "#A5D6A7",
-    alignItems: "center",
-  },
-  textoBienvenidaGrande: {
-    fontSize: 22,
-    fontWeight: "900",
-    color: "#2E7D32",
-    textAlign: "center",
-    marginBottom: 5,
-  },
-  textoBienvenida: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#2E7D32",
-    textAlign: "center",
-    marginBottom: 5,
-  },
-  dinoMiniContainer: {
-    marginTop: 10,
-    alignItems: "center",
-  },
-  dinoMini: {
-    width: 100,
-    height: 100,
-    resizeMode: "contain",
-  },
-  dinoMiniTexto: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#546E7A",
-    marginTop: 4,
-  },
   scrollContainer: {
     flexGrow: 1,
     justifyContent: "center",
@@ -258,18 +326,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 10,
   },
-  tituloBienvenida: {
-    fontSize: 24,
-    fontWeight: "900",
-    color: "#FF5722",
-    marginBottom: 15,
-    textAlign: "center",
-  },
   subtitulo: {
     fontSize: 19,
     fontWeight: "900",
     color: "#FF5722",
     marginBottom: 10,
+    textAlign: "center",
+  },
+  textoPuntaje: {
+    fontSize: 15,
+    fontWeight: "bold",
+    color: "#2E7D32",
+    marginBottom: 20,
     textAlign: "center",
   },
   input: {
@@ -306,29 +374,36 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderBottomWidth: 5,
     borderBottomColor: "#388E3C",
-    marginTop: 5,
+    marginTop: 10,
   },
-  botonContinuar: {
-    backgroundColor: "#4CAF50",
-    width: "100%",
-    height: 58,
-    borderRadius: 25,
-    justifyContent: "center",
-    alignItems: "center",
-    borderBottomWidth: 5,
-    borderBottomColor: "#388E3C",
-    marginTop: 5,
+  botonVolver: {
+    marginTop: 15,
+    padding: 8,
+  },
+  textoVolver: {
+    color: "#78909C",
+    fontSize: 15,
+    fontWeight: "bold",
   },
   textoBoton: {
     color: "#FFFFFF",
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "900",
   },
+  textoError: {
+    color: "#E53935",
+    fontSize: 14,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 10,
+    paddingHorizontal: 5,
+  },
   tituloSeleccion: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "900",
     color: "#2E7D32",
     textAlign: "center",
+    marginTop: 5,
   },
   subtituloSeleccion: {
     fontSize: 15,
@@ -341,6 +416,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-between",
     width: "100%",
+    marginTop: 10,
     marginBottom: 15,
   },
   tarjetaDino: {
