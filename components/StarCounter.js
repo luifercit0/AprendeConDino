@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { View, Text, StyleSheet, Platform } from "react-native";
+import { View, Text, StyleSheet, Platform, Image } from "react-native";
 import { ScoreContext } from "../context/ScoreContext";
 
 export default function StarCounter() {
@@ -7,7 +7,7 @@ export default function StarCounter() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.emoji}>⭐</Text>
+      <Image source={require("../assets/estrella.gif")} style={styles.icono} resizeMode="contain" />
       <Text style={styles.text}>{stars}</Text>
     </View>
   );
@@ -16,32 +16,31 @@ export default function StarCounter() {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    // Asegura que no se pegue al notch en dispositivos modernos
-    top: Platform.OS === "ios" ? 60 : 45, 
+    top: Platform.OS === "ios" ? 60 : 45,
     right: 20,
-    backgroundColor: "#FFF9C4", // Amarillo pastel muy suave de fondo
+    backgroundColor: "#FFF9C4",
     borderWidth: 3,
-    borderColor: "#FFD54F", // Borde amarillo fuerte interactivo
+    borderColor: "#FFD54F",
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 25,
-    // Efecto de elevación infantil (estilo pegatina/sticker)
     elevation: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.15,
     shadowRadius: 4,
-    zIndex: 999, // Asegura que siempre esté por encima del contenido
+    zIndex: 999,
   },
-  emoji: {
-    fontSize: 22,
+  icono: {
+    width: 24,
+    height: 24,
     marginRight: 6,
   },
   text: {
     fontSize: 22,
-    fontWeight: "900", // Peso extra para que resalte mucho
-    color: "#FF8F00", // Texto café/anaranjado oscuro, más amigable que el negro puro
+    fontWeight: "900",
+    color: "#FF8F00",
   },
 });

@@ -19,10 +19,10 @@ export default function MenuScreen({ navigation }) {
   const { cerrarSesion } = useContext(UserContext);
 
   const opcionesMenu = [
-    { id: "letras", titulo: "Letras", icono: require("../assets/letrasIcon.png"), ruta: "Letras" },
-    { id: "numeros", titulo: "Números", icono: require("../assets/numerosIcon.png"), ruta: "Numeros" },
-    { id: "colores", titulo: "Colores", icono: require("../assets/coloresIcon.png"), ruta: "Colores" },
-    { id: "dino", titulo: "Juego Dino", icono: require("../assets/dinoIcon.png"), ruta: "DinoGame" },
+    { id: "letras", titulo: "Letras", icono: require("../assets/letrasIcon.png"), ruta: "Letras", colorFondo: "#1976D2" },
+    { id: "numeros", titulo: "Números", icono: require("../assets/numerosIcon.png"), ruta: "Numeros", colorFondo: "#FFC107" },
+    { id: "colores", titulo: "Colores", icono: require("../assets/coloresIcon.png"), ruta: "Colores", colorFondo: "#00796B" },
+    { id: "dino", titulo: "Juego Dino", icono: require("../assets/dinoIcon.png"), ruta: "DinoGame", colorFondo: "#4CAF50" },
   ];
 
   const handleSalir = () => {
@@ -58,15 +58,17 @@ export default function MenuScreen({ navigation }) {
               onPress={() => navigation.navigate(item.ruta)}
               activeOpacity={0.85}
             >
-              <ImageBackground
-                source={botonPixel}
-                resizeMode="stretch"
-                style={styles.fondoTarjeta}
-                imageStyle={styles.imagenTarjeta}
-              >
-                <Image source={item.icono} style={styles.iconoTarjeta} resizeMode="contain" />
-                <Text style={styles.textoTarjeta}>{item.titulo}</Text>
-              </ImageBackground>
+              <View style={[styles.contenedorFondoColor, { backgroundColor: item.colorFondo }]}>
+                <ImageBackground
+                  source={botonPixel}
+                  resizeMode="stretch"
+                  style={styles.fondoTarjeta}
+                  imageStyle={[styles.imagenTarjeta, { opacity: 0.45, tintColor: "#212121" }]}
+                >
+                  <Image source={item.icono} style={styles.iconoTarjeta} resizeMode="contain" />
+                  <Text style={styles.textoTarjeta}>{item.titulo}</Text>
+                </ImageBackground>
+              </View>
             </TouchableOpacity>
           ))}
         </View>
@@ -76,19 +78,21 @@ export default function MenuScreen({ navigation }) {
           onPress={() => navigation.navigate("Certificado")}
           activeOpacity={0.85}
         >
-          <ImageBackground
-            source={botonLPixel}
-            resizeMode="stretch"
-            style={styles.fondoCertificado}
-            imageStyle={styles.imagenCertificado}
-          >
-            <Image
-              source={require("../assets/certificadoIcon.png")}
-              style={styles.iconoCertificado}
-              resizeMode="contain"
-            />
-            <Text style={styles.textoCertificado}>¡Mi Certificado!</Text>
-          </ImageBackground>
+          <View style={[styles.contenedorFondoColor, { backgroundColor: "#7B1FA2" }]}>
+            <ImageBackground
+              source={botonLPixel}
+              resizeMode="stretch"
+              style={styles.fondoCertificado}
+              imageStyle={[styles.imagenCertificado, { opacity: 0.45, tintColor: "#212121" }]}
+            >
+              <Image
+                source={require("../assets/certificadoIcon.png")}
+                style={styles.iconoCertificado}
+                resizeMode="contain"
+              />
+              <Text style={styles.textoCertificado}>¡Mi Certificado!</Text>
+            </ImageBackground>
+          </View>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -96,14 +100,16 @@ export default function MenuScreen({ navigation }) {
           onPress={handleSalir}
           activeOpacity={0.85}
         >
-          <ImageBackground
-            source={botonLPixel}
-            resizeMode="stretch"
-            style={styles.fondoSalir}
-            imageStyle={styles.imagenSalir}
-          >
-            <Text style={styles.textoSalir}>Salir del juego</Text>
-          </ImageBackground>
+          <View style={[styles.contenedorFondoColor, { backgroundColor: "#D32F2F" }]}>
+            <ImageBackground
+              source={botonLPixel}
+              resizeMode="stretch"
+              style={styles.fondoSalir}
+              imageStyle={[styles.imagenSalir, { opacity: 0.45, tintColor: "#212121" }]}
+            >
+              <Text style={styles.textoSalir}>Salir del juego</Text>
+            </ImageBackground>
+          </View>
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -113,7 +119,7 @@ export default function MenuScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFDE7",
+    backgroundColor: "#D6EADF",
   },
   scrollContainer: {
     paddingTop: 100,
@@ -145,6 +151,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 0,
   },
+  contenedorFondoColor: {
+    flex: 1,
+    borderRadius: 12,
+    overflow: "hidden",
+  },
   fondoTarjeta: {
     flex: 1,
     justifyContent: "center",
@@ -170,6 +181,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 70,
     marginTop: 10,
+    elevation: 6,
+    shadowColor: "#000",
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 0,
   },
   fondoCertificado: {
     flex: 1,
@@ -196,7 +212,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 60,
     marginTop: 14,
-    opacity: 0.9,
+    elevation: 6,
+    shadowColor: "#000",
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 0,
   },
   fondoSalir: {
     flex: 1,

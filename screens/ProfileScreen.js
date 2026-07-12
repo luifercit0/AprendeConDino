@@ -37,7 +37,7 @@ export default function ProfileScreen() {
     >
       <DinoHeader />
       
-      <Text style={styles.titulo}>Mi Perfil de Explorador</Text>
+      <Text style={styles.titulo}>Mi Perfil</Text>
 
       <View style={styles.tarjetaPerfil}>
         <View style={[styles.avatarContainer, { backgroundColor: colorRango + "15" }]}>

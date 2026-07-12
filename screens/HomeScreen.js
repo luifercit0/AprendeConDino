@@ -11,10 +11,13 @@ import {
   Keyboard,
   ScrollView,
   Image,
+  ImageBackground,
   ActivityIndicator,
 } from "react-native";
 import { UserContext } from "../context/UserContext";
 import DinoHeader from "../components/DinoHeader";
+
+const botonLPixel = require("../assets/botonLPixel.png");
 
 const listaDinos = [
   { id: "dino_celeste_cresta", img: require("../assets/dino_celeste_cresta.png"), color: "#E3F2FD" },
@@ -115,14 +118,23 @@ export default function HomeScreen({ navigation }) {
           {modo === "bienvenida" && (
             <View style={styles.cardContainer}>
               <Text style={styles.subtitulo}>¡Hola de nuevo, {nombre}!</Text>
-              <Text style={styles.textoPuntaje}>Tu último puntaje fue {ultimoPuntaje} ⭐</Text>
+              <Text style={styles.textoPuntaje}>Tu último puntaje fue {ultimoPuntaje} estrellas</Text>
 
               <TouchableOpacity
                 style={styles.botonJugar}
                 onPress={handleContinuarBienvenida}
                 activeOpacity={0.8}
               >
-                <Text style={styles.textoBoton}>¡SEGUIR JUGANDO! 🚀</Text>
+                <View style={[styles.contenedorFondoColor, { backgroundColor: "#4CAF50" }]}>
+                  <ImageBackground
+                    source={botonLPixel}
+                    resizeMode="stretch"
+                    style={styles.fondoBoton}
+                    imageStyle={{ opacity: 0.45, tintColor: "#212121" }}
+                  >
+                    <Text style={styles.textoBoton}>¡SEGUIR JUGANDO!</Text>
+                  </ImageBackground>
+                </View>
               </TouchableOpacity>
             </View>
           )}
@@ -136,7 +148,16 @@ export default function HomeScreen({ navigation }) {
                 onPress={() => setModo("registro-datos")}
                 activeOpacity={0.8}
               >
-                <Text style={styles.textoBoton}>¡Soy nuevo! 🆕</Text>
+                <View style={[styles.contenedorFondoColor, { backgroundColor: "#2196F3" }]}>
+                  <ImageBackground
+                    source={botonLPixel}
+                    resizeMode="stretch"
+                    style={styles.fondoBoton}
+                    imageStyle={{ opacity: 0.45, tintColor: "#212121" }}
+                  >
+                    <Text style={styles.textoBoton}>¡Soy nuevo!</Text>
+                  </ImageBackground>
+                </View>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -144,7 +165,16 @@ export default function HomeScreen({ navigation }) {
                 onPress={() => setModo("login")}
                 activeOpacity={0.8}
               >
-                <Text style={styles.textoBoton}>Ya tengo mi Dino 🦕</Text>
+                <View style={[styles.contenedorFondoColor, { backgroundColor: "#4CAF50" }]}>
+                  <ImageBackground
+                    source={botonLPixel}
+                    resizeMode="stretch"
+                    style={styles.fondoBoton}
+                    imageStyle={{ opacity: 0.45, tintColor: "#212121" }}
+                  >
+                    <Text style={styles.textoBoton}>Ya tengo mi Dino</Text>
+                  </ImageBackground>
+                </View>
               </TouchableOpacity>
             </View>
           )}
@@ -178,7 +208,16 @@ export default function HomeScreen({ navigation }) {
                 onPress={handleSiguienteRegistro}
                 activeOpacity={0.8}
               >
-                <Text style={styles.textoBoton}>SIGUIENTE</Text>
+                <View style={[styles.contenedorFondoColor, { backgroundColor: "#2196F3" }]}>
+                  <ImageBackground
+                    source={botonLPixel}
+                    resizeMode="stretch"
+                    style={styles.fondoBoton}
+                    imageStyle={{ opacity: 0.45, tintColor: "#212121" }}
+                  >
+                    <Text style={styles.textoBoton}>SIGUIENTE</Text>
+                  </ImageBackground>
+                </View>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.botonVolver} onPress={volverAlInicio}>
@@ -217,7 +256,16 @@ export default function HomeScreen({ navigation }) {
                 onPress={handleFinalizarRegistro}
                 activeOpacity={0.8}
               >
-                <Text style={styles.textoBoton}>¡VAMOS A JUGAR! 🚀</Text>
+                <View style={[styles.contenedorFondoColor, { backgroundColor: "#4CAF50" }]}>
+                  <ImageBackground
+                    source={botonLPixel}
+                    resizeMode="stretch"
+                    style={styles.fondoBoton}
+                    imageStyle={{ opacity: 0.45, tintColor: "#212121" }}
+                  >
+                    <Text style={styles.textoBoton}>¡VAMOS A JUGAR!</Text>
+                  </ImageBackground>
+                </View>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.botonVolver} onPress={() => setModo("registro-datos")}>
@@ -280,9 +328,18 @@ export default function HomeScreen({ navigation }) {
                 activeOpacity={0.8}
                 disabled={buscando}
               >
-                <Text style={styles.textoBoton}>
-                  {buscando ? "Buscando..." : "ENTRAR 🔑"}
-                </Text>
+                <View style={[styles.contenedorFondoColor, { backgroundColor: "#4CAF50" }]}>
+                  <ImageBackground
+                    source={botonLPixel}
+                    resizeMode="stretch"
+                    style={styles.fondoBoton}
+                    imageStyle={{ opacity: 0.45, tintColor: "#212121" }}
+                  >
+                    <Text style={styles.textoBoton}>
+                      {buscando ? "Buscando..." : "ENTRAR"}
+                    </Text>
+                  </ImageBackground>
+                </View>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.botonVolver} onPress={volverAlInicio}>
@@ -355,26 +412,34 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   botonSiguiente: {
-    backgroundColor: "#2196F3",
     width: "100%",
     height: 58,
-    borderRadius: 25,
-    justifyContent: "center",
-    alignItems: "center",
-    borderBottomWidth: 5,
-    borderBottomColor: "#1565C0",
     marginTop: 10,
+    elevation: 6,
+    shadowColor: "#000",
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 0,
   },
   botonJugar: {
-    backgroundColor: "#4CAF50",
     width: "100%",
     height: 58,
-    borderRadius: 25,
+    marginTop: 10,
+    elevation: 6,
+    shadowColor: "#000",
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 0,
+  },
+  contenedorFondoColor: {
+    flex: 1,
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+  fondoBoton: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderBottomWidth: 5,
-    borderBottomColor: "#388E3C",
-    marginTop: 10,
   },
   botonVolver: {
     marginTop: 15,
@@ -389,6 +454,9 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 20,
     fontWeight: "900",
+    textShadowColor: "rgba(0, 0, 0, 0.35)",
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 0,
   },
   textoError: {
     color: "#E53935",

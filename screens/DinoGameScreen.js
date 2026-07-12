@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Animated,
+  Image,
 } from "react-native";
 import { ScoreContext } from "../context/ScoreContext";
 import { UserContext } from "../context/UserContext";
@@ -18,17 +19,17 @@ export default function DinoGameScreen({ navigation }) {
   const { dinoElegido, nombre } = useContext(UserContext);
 
   const frutas = [
-    { emoji: "🍎", nombre: "Manzana" },
-    { emoji: "🍌", nombre: "Plátano" },
-    { emoji: "🍉", nombre: "Sandía" },
-    { emoji: "🍇", nombre: "Uvas" },
+    { nombre: "Manzana", imagen: require("../assets/Manzana.png") },
+    { nombre: "Plátano", imagen: require("../assets/Banana.png") },
+    { nombre: "Sandía", imagen: require("../assets/Sandia.png") },
+    { nombre: "Uvas", imagen: require("../assets/Morado.png") },
   ];
 
   const [frutaAntojo, setFrutaAntojo] = useState(frutas[0]);
   const [aciertos, setAciertos] = useState(0);
   const [huboError, setHuboError] = useState(false);
   const [bloqueado, setBloqueado] = useState(false);
-  const [burbujaTexto, setBurbujaTexto] = useState(`¡Hola ${nombre}! Tengo antojo de una ${frutas[0].nombre} ${frutas[0].emoji}`);
+  const [burbujaTexto, setBurbujaTexto] = useState(`¡Hola ${nombre}! Tengo antojo de una ${frutas[0].nombre}`);
 
   const escalaDino = useRef(new Animated.Value(1)).current;
 
@@ -52,7 +53,7 @@ export default function DinoGameScreen({ navigation }) {
   const pedirOtraFruta = () => {
     const siguienteFruta = frutas[Math.floor(Math.random() * frutas.length)];
     setFrutaAntojo(siguienteFruta);
-    setBurbujaTexto(`¡Ya digerí la comida! Ahora tengo antojo de: ${siguienteFruta.nombre} ${siguienteFruta.emoji}`);
+    setBurbujaTexto(`¡Ya digerí la comida! Ahora tengo antojo de: ${siguienteFruta.nombre}`);
     setBloqueado(false);
   };
 
@@ -68,7 +69,7 @@ export default function DinoGameScreen({ navigation }) {
       const nuevosAciertos = aciertos + 1;
       setAciertos(nuevosAciertos);
       addStar("DinoGame");
-      setBurbujaTexto(`¡Siii! ¡Le atinaste, ${nombre}! Me fascinan las ${frutaSeleccionada.nombre}s 😋`);
+      setBurbujaTexto(`¡Siii! ¡Le atinaste, ${nombre}! Me fascinan las ${frutaSeleccionada.nombre}s`);
 
       if (nuevosAciertos >= META_ACIERTOS) {
         marcarCompletada("DinoGame");
@@ -80,7 +81,7 @@ export default function DinoGameScreen({ navigation }) {
     } else {
       setHuboError(true);
       addStar("DinoGame");
-      setBurbujaTexto(`¡Gracias! La ${frutaSeleccionada.nombre} está rica, pero yo buscaba una ${frutaAntojo.nombre} 🤭`);
+      setBurbujaTexto(`¡Gracias! La ${frutaSeleccionada.nombre} está rica, pero yo buscaba una ${frutaAntojo.nombre}`);
     }
 
     setTimeout(pedirOtraFruta, 1800);
@@ -91,8 +92,8 @@ export default function DinoGameScreen({ navigation }) {
       <BackToMenuButton navigation={navigation} />
       <StarCounter />
 
-      <Text style={styles.titulo}>Alimenta a tu Dino 🌳</Text>
-      <Text style={styles.puntos}>⭐ {aciertos} / {META_ACIERTOS}</Text>
+      <Text style={styles.titulo}>Alimenta a tu Dino</Text>
+      <Text style={styles.puntos}>Puntos: {aciertos} / {META_ACIERTOS}</Text>
 
       <View style={styles.personajeContainer}>
         <View style={styles.burbuja}>
@@ -117,7 +118,7 @@ export default function DinoGameScreen({ navigation }) {
             activeOpacity={0.6}
             disabled={bloqueado}
           >
-            <Text style={styles.frutaEmoji}>{fruta.emoji}</Text>
+            <Image source={fruta.imagen} style={styles.imagenFruta} resizeMode="contain" />
           </TouchableOpacity>
         ))}
       </View>
@@ -207,18 +208,20 @@ const styles = StyleSheet.create({
   },
   botonFruta: {
     backgroundColor: "#F1F8E9",
-    width: 65,
-    height: 65,
+    width: 68,
+    height: 68,
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
     borderBottomWidth: 4,
     borderBottomColor: "#C5E1A5",
+    padding: 6,
   },
   botonBloqueado: {
     opacity: 0.5,
   },
-  frutaEmoji: {
-    fontSize: 36,
+  imagenFruta: {
+    width: "100%",
+    height: "100%",
   },
 });
