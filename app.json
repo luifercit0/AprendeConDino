@@ -27,8 +27,8 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "supabaseUrl": "https://rhtqphpchukbmytvezib.supabase.co",
-      "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJodHFwaHBjaHVrYm15dHZlemliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0NjcxNjMsImV4cCI6MjA5OTA0MzE2M30.DYURB1jTOQw3dV2HzDM84AuGgOJEWF_s6YvyJcobHtA"
+      "supabaseUrl": "pega aca",
+      "supabaseAnonKey": "pega aca"
     }
   }
 }
