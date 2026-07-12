@@ -14,10 +14,12 @@ import {
   ImageBackground,
   ActivityIndicator,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { UserContext } from "../context/UserContext";
 import DinoHeader from "../components/DinoHeader";
 
 const botonLPixel = require("../assets/botonLPixel.png");
+const dinoLogo = require("../assets/dino_logo.png");
 
 const listaDinos = [
   { id: "dino_celeste_cresta", img: require("../assets/dino_celeste_cresta.png"), color: "#E3F2FD" },
@@ -100,255 +102,268 @@ export default function HomeScreen({ navigation }) {
 
   if (cargando) {
     return (
-      <View style={styles.cargandoContainer}>
-        <ActivityIndicator size="large" color="#4CAF50" />
-      </View>
+      <LinearGradient
+        colors={["#80DEEA", "#4C8ECB", "#2362A1"]}
+        start={{ x: 0.2, y: 0 }}
+        end={{ x: 0.8, y: 1 }}
+        style={styles.cargandoContainer}
+      >
+        <ActivityIndicator size="large" color="#FFFFFF" />
+      </LinearGradient>
     );
   }
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      <LinearGradient
+        colors={["#80DEEA", "#4C8ECB", "#2362A1"]}
+        start={{ x: 0.2, y: 0 }}
+        end={{ x: 0.8, y: 1 }}
         style={styles.container}
       >
-        <ScrollView contentContainerStyle={styles.scrollContainer} bounces={false}>
-          <DinoHeader />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <ScrollView contentContainerStyle={styles.scrollContainer} bounces={false}>
+            <Image source={dinoLogo} style={styles.logo} resizeMode="contain" />
+            <DinoHeader />
 
-          {modo === "bienvenida" && (
-            <View style={styles.cardContainer}>
-              <Text style={styles.subtitulo}>¡Hola de nuevo, {nombre}!</Text>
-              <Text style={styles.textoPuntaje}>Tu último puntaje fue {ultimoPuntaje} estrellas</Text>
+            {modo === "bienvenida" && (
+              <View style={styles.cardContainer}>
+                <Text style={styles.subtitulo}>¡Hola de nuevo, {nombre}!</Text>
+                <Text style={styles.textoPuntaje}>Tu último puntaje fue {ultimoPuntaje} estrellas</Text>
 
-              <TouchableOpacity
-                style={styles.botonJugar}
-                onPress={handleContinuarBienvenida}
-                activeOpacity={0.8}
-              >
-                <View style={[styles.contenedorFondoColor, { backgroundColor: "#4CAF50" }]}>
-                  <ImageBackground
-                    source={botonLPixel}
-                    resizeMode="stretch"
-                    style={styles.fondoBoton}
-                    imageStyle={{ opacity: 0.45, tintColor: "#212121" }}
-                  >
-                    <Text style={styles.textoBoton}>¡SEGUIR JUGANDO!</Text>
-                  </ImageBackground>
-                </View>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {modo === "inicio" && (
-            <View style={styles.cardContainer}>
-              <Text style={styles.subtitulo}>¿Ya tienes una Dino cuenta?</Text>
-
-              <TouchableOpacity
-                style={styles.botonSiguiente}
-                onPress={() => setModo("registro-datos")}
-                activeOpacity={0.8}
-              >
-                <View style={[styles.contenedorFondoColor, { backgroundColor: "#2196F3" }]}>
-                  <ImageBackground
-                    source={botonLPixel}
-                    resizeMode="stretch"
-                    style={styles.fondoBoton}
-                    imageStyle={{ opacity: 0.45, tintColor: "#212121" }}
-                  >
-                    <Text style={styles.textoBoton}>¡Soy nuevo!</Text>
-                  </ImageBackground>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.botonJugar}
-                onPress={() => setModo("login")}
-                activeOpacity={0.8}
-              >
-                <View style={[styles.contenedorFondoColor, { backgroundColor: "#4CAF50" }]}>
-                  <ImageBackground
-                    source={botonLPixel}
-                    resizeMode="stretch"
-                    style={styles.fondoBoton}
-                    imageStyle={{ opacity: 0.45, tintColor: "#212121" }}
-                  >
-                    <Text style={styles.textoBoton}>Ya tengo mi Dino</Text>
-                  </ImageBackground>
-                </View>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {modo === "registro-datos" && (
-            <View style={styles.cardContainer}>
-              <Text style={styles.subtitulo}>¿Cómo te llamas?</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Escribe tu nombre..."
-                placeholderTextColor="#90A4AE"
-                value={inputNombre}
-                onChangeText={setInputNombre}
-                maxLength={12}
-                autoCapitalize="words"
-              />
-
-              <Text style={styles.subtitulo}>¿Cuántos años tienes?</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Escribe tu edad..."
-                placeholderTextColor="#90A4AE"
-                value={inputEdad}
-                onChangeText={setInputEdad}
-                maxLength={2}
-                keyboardType="number-pad"
-              />
-
-              <TouchableOpacity
-                style={styles.botonSiguiente}
-                onPress={handleSiguienteRegistro}
-                activeOpacity={0.8}
-              >
-                <View style={[styles.contenedorFondoColor, { backgroundColor: "#2196F3" }]}>
-                  <ImageBackground
-                    source={botonLPixel}
-                    resizeMode="stretch"
-                    style={styles.fondoBoton}
-                    imageStyle={{ opacity: 0.45, tintColor: "#212121" }}
-                  >
-                    <Text style={styles.textoBoton}>SIGUIENTE</Text>
-                  </ImageBackground>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.botonVolver} onPress={volverAlInicio}>
-                <Text style={styles.textoVolver}>‹ Volver</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {modo === "registro-dino" && (
-            <View style={styles.cardContainer}>
-              <Text style={styles.tituloSeleccion}>¡Elige tu Dino amigo!</Text>
-              <Text style={styles.subtituloSeleccion}>Toca el que más te guste:</Text>
-
-              <View style={styles.gridDinos}>
-                {listaDinos.map((dino) => {
-                  const esElegido = dinoSeleccionado === dino.id;
-                  return (
-                    <TouchableOpacity
-                      key={dino.id}
-                      style={[
-                        styles.tarjetaDino,
-                        { backgroundColor: dino.color },
-                        esElegido && styles.tarjetaDinoSeleccionada,
-                      ]}
-                      onPress={() => setDinoSeleccionado(dino.id)}
-                      activeOpacity={0.7}
+                <TouchableOpacity
+                  style={styles.botonJugar}
+                  onPress={handleContinuarBienvenida}
+                  activeOpacity={0.8}
+                >
+                  <View style={[styles.contenedorFondoColor, { backgroundColor: "#4CAF50" }]}>
+                    <ImageBackground
+                      source={botonLPixel}
+                      resizeMode="stretch"
+                      style={styles.fondoBoton}
+                      imageStyle={{ opacity: 0.45, tintColor: "#212121" }}
                     >
-                      <Image source={dino.img} style={styles.imagenDino} />
-                    </TouchableOpacity>
-                  );
-                })}
+                      <Text style={styles.textoBoton}>¡SEGUIR JUGANDO!</Text>
+                    </ImageBackground>
+                  </View>
+                </TouchableOpacity>
               </View>
+            )}
 
-              <TouchableOpacity
-                style={styles.botonJugar}
-                onPress={handleFinalizarRegistro}
-                activeOpacity={0.8}
-              >
-                <View style={[styles.contenedorFondoColor, { backgroundColor: "#4CAF50" }]}>
-                  <ImageBackground
-                    source={botonLPixel}
-                    resizeMode="stretch"
-                    style={styles.fondoBoton}
-                    imageStyle={{ opacity: 0.45, tintColor: "#212121" }}
-                  >
-                    <Text style={styles.textoBoton}>¡VAMOS A JUGAR!</Text>
-                  </ImageBackground>
-                </View>
-              </TouchableOpacity>
+            {modo === "inicio" && (
+              <View style={styles.cardContainer}>
+                <Text style={styles.subtitulo}>¿Ya tienes una Dino cuenta?</Text>
 
-              <TouchableOpacity style={styles.botonVolver} onPress={() => setModo("registro-datos")}>
-                <Text style={styles.textoVolver}>‹ Volver</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {modo === "login" && (
-            <View style={styles.cardContainer}>
-              <Text style={styles.subtitulo}>¿Cómo te llamas?</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Escribe tu nombre..."
-                placeholderTextColor="#90A4AE"
-                value={inputNombre}
-                onChangeText={setInputNombre}
-                maxLength={12}
-                autoCapitalize="words"
-              />
-
-              <Text style={styles.subtitulo}>¿Cuántos años tienes?</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Escribe tu edad..."
-                placeholderTextColor="#90A4AE"
-                value={inputEdad}
-                onChangeText={setInputEdad}
-                maxLength={2}
-                keyboardType="number-pad"
-              />
-
-              <Text style={styles.tituloSeleccion}>¿Cuál era tu Dino?</Text>
-
-              <View style={styles.gridDinos}>
-                {listaDinos.map((dino) => {
-                  const esElegido = dinoSeleccionado === dino.id;
-                  return (
-                    <TouchableOpacity
-                      key={dino.id}
-                      style={[
-                        styles.tarjetaDino,
-                        { backgroundColor: dino.color },
-                        esElegido && styles.tarjetaDinoSeleccionada,
-                      ]}
-                      onPress={() => setDinoSeleccionado(dino.id)}
-                      activeOpacity={0.7}
+                <TouchableOpacity
+                  style={styles.botonSiguiente}
+                  onPress={() => setModo("registro-datos")}
+                  activeOpacity={0.8}
+                >
+                  <View style={[styles.contenedorFondoColor, { backgroundColor: "#2196F3" }]}>
+                    <ImageBackground
+                      source={botonLPixel}
+                      resizeMode="stretch"
+                      style={styles.fondoBoton}
+                      imageStyle={{ opacity: 0.45, tintColor: "#212121" }}
                     >
-                      <Image source={dino.img} style={styles.imagenDino} />
-                    </TouchableOpacity>
-                  );
-                })}
+                      <Text style={styles.textoBoton}>¡Soy nuevo!</Text>
+                    </ImageBackground>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.botonJugar}
+                  onPress={() => setModo("login")}
+                  activeOpacity={0.8}
+                >
+                  <View style={[styles.contenedorFondoColor, { backgroundColor: "#4CAF50" }]}>
+                    <ImageBackground
+                      source={botonLPixel}
+                      resizeMode="stretch"
+                      style={styles.fondoBoton}
+                      imageStyle={{ opacity: 0.45, tintColor: "#212121" }}
+                    >
+                      <Text style={styles.textoBoton}>Ya tengo mi Dino</Text>
+                    </ImageBackground>
+                  </View>
+                </TouchableOpacity>
               </View>
+            )}
 
-              {errorLogin ? <Text style={styles.textoError}>{errorLogin}</Text> : null}
+            {modo === "registro-datos" && (
+              <View style={styles.cardContainer}>
+                <Text style={styles.subtitulo}>¿Cómo te llamas?</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Escribe tu nombre..."
+                  placeholderTextColor="#90A4AE"
+                  value={inputNombre}
+                  onChangeText={setInputNombre}
+                  maxLength={12}
+                  autoCapitalize="words"
+                />
 
-              <TouchableOpacity
-                style={styles.botonJugar}
-                onPress={handleLogin}
-                activeOpacity={0.8}
-                disabled={buscando}
-              >
-                <View style={[styles.contenedorFondoColor, { backgroundColor: "#4CAF50" }]}>
-                  <ImageBackground
-                    source={botonLPixel}
-                    resizeMode="stretch"
-                    style={styles.fondoBoton}
-                    imageStyle={{ opacity: 0.45, tintColor: "#212121" }}
-                  >
-                    <Text style={styles.textoBoton}>
-                      {buscando ? "Buscando..." : "ENTRAR"}
-                    </Text>
-                  </ImageBackground>
+                <Text style={styles.subtitulo}>¿Cuántos años tienes?</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Escribe tu edad..."
+                  placeholderTextColor="#90A4AE"
+                  value={inputEdad}
+                  onChangeText={setInputEdad}
+                  maxLength={2}
+                  keyboardType="number-pad"
+                />
+
+                <TouchableOpacity
+                  style={styles.botonSiguiente}
+                  onPress={handleSiguienteRegistro}
+                  activeOpacity={0.8}
+                >
+                  <View style={[styles.contenedorFondoColor, { backgroundColor: "#2196F3" }]}>
+                    <ImageBackground
+                      source={botonLPixel}
+                      resizeMode="stretch"
+                      style={styles.fondoBoton}
+                      imageStyle={{ opacity: 0.45, tintColor: "#212121" }}
+                    >
+                      <Text style={styles.textoBoton}>SIGUIENTE</Text>
+                    </ImageBackground>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.botonVolver} onPress={volverAlInicio}>
+                  <Text style={styles.textoVolver}>‹ Volver</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {modo === "registro-dino" && (
+              <View style={styles.cardContainer}>
+                <Text style={styles.tituloSeleccion}>¡Elige tu Dino amigo!</Text>
+                <Text style={styles.subtituloSeleccion}>Toca el que más te guste:</Text>
+
+                <View style={styles.gridDinos}>
+                  {listaDinos.map((dino) => {
+                    const esElegido = dinoSeleccionado === dino.id;
+                    return (
+                      <TouchableOpacity
+                        key={dino.id}
+                        style={[
+                          styles.tarjetaDino,
+                          { backgroundColor: dino.color },
+                          esElegido && styles.tarjetaDinoSeleccionada,
+                        ]}
+                        onPress={() => setDinoSeleccionado(dino.id)}
+                        activeOpacity={0.7}
+                      >
+                        <Image source={dino.img} style={styles.imagenDino} />
+                      </TouchableOpacity>
+                    );
+                  })}
                 </View>
-              </TouchableOpacity>
 
-              <TouchableOpacity style={styles.botonVolver} onPress={volverAlInicio}>
-                <Text style={styles.textoVolver}>‹ Volver</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </ScrollView>
-      </KeyboardAvoidingView>
+                <TouchableOpacity
+                  style={styles.botonJugar}
+                  onPress={handleFinalizarRegistro}
+                  activeOpacity={0.8}
+                >
+                  <View style={[styles.contenedorFondoColor, { backgroundColor: "#4CAF50" }]}>
+                    <ImageBackground
+                      source={botonLPixel}
+                      resizeMode="stretch"
+                      style={styles.fondoBoton}
+                      imageStyle={{ opacity: 0.45, tintColor: "#212121" }}
+                    >
+                      <Text style={styles.textoBoton}>¡VAMOS A JUGAR!</Text>
+                    </ImageBackground>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.botonVolver} onPress={() => setModo("registro-datos")}>
+                  <Text style={styles.textoVolver}>‹ Volver</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {modo === "login" && (
+              <View style={styles.cardContainer}>
+                <Text style={styles.subtitulo}>¿Cómo te llamas?</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Escribe tu nombre..."
+                  placeholderTextColor="#90A4AE"
+                  value={inputNombre}
+                  onChangeText={setInputNombre}
+                  maxLength={12}
+                  autoCapitalize="words"
+                />
+
+                <Text style={styles.subtitulo}>¿Cuántos años tienes?</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Escribe tu edad..."
+                  placeholderTextColor="#90A4AE"
+                  value={inputEdad}
+                  onChangeText={setInputEdad}
+                  maxLength={2}
+                  keyboardType="number-pad"
+                />
+
+                <Text style={styles.tituloSeleccion}>¿Cuál era tu Dino?</Text>
+
+                <View style={styles.gridDinos}>
+                  {listaDinos.map((dino) => {
+                    const esElegido = dinoSeleccionado === dino.id;
+                    return (
+                      <TouchableOpacity
+                        key={dino.id}
+                        style={[
+                          styles.tarjetaDino,
+                          { backgroundColor: dino.color },
+                          esElegido && styles.tarjetaDinoSeleccionada,
+                        ]}
+                        onPress={() => setDinoSeleccionado(dino.id)}
+                        activeOpacity={0.7}
+                      >
+                        <Image source={dino.img} style={styles.imagenDino} />
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+
+                {errorLogin ? <Text style={styles.textoError}>{errorLogin}</Text> : null}
+
+                <TouchableOpacity
+                  style={styles.botonJugar}
+                  onPress={handleLogin}
+                  activeOpacity={0.8}
+                  disabled={buscando}
+                >
+                  <View style={[styles.contenedorFondoColor, { backgroundColor: "#4CAF50" }]}>
+                    <ImageBackground
+                      source={botonLPixel}
+                      resizeMode="stretch"
+                      style={styles.fondoBoton}
+                      imageStyle={{ opacity: 0.45, tintColor: "#212121" }}
+                    >
+                      <Text style={styles.textoBoton}>
+                        {buscando ? "Buscando..." : "ENTRAR"}
+                      </Text>
+                    </ImageBackground>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.botonVolver} onPress={volverAlInicio}>
+                  <Text style={styles.textoVolver}>‹ Volver</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </LinearGradient>
     </TouchableWithoutFeedback>
   );
 }
@@ -356,13 +371,16 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#E3F2FD",
   },
   cargandoContainer: {
     flex: 1,
-    backgroundColor: "#E3F2FD",
     alignItems: "center",
     justifyContent: "center",
+  },
+  logo: {
+    width: 140,
+    height: 140,
+    marginBottom: 10,
   },
   scrollContainer: {
     flexGrow: 1,
