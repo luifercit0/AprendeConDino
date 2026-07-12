@@ -1,9 +1,11 @@
 import React, { useContext } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
 import DinoHeader from "../components/DinoHeader";
 import BackToMenuButton from "../components/BackToMenuButton";
 import { UserContext } from "../context/UserContext";
 import { ScoreContext } from "../context/ScoreContext";
+
+const trofeoGif = require("../assets/trofeo.gif");
 
 export default function CertificadoScreen({ navigation }) {
   const { nombre } = useContext(UserContext);
@@ -14,9 +16,11 @@ export default function CertificadoScreen({ navigation }) {
       <BackToMenuButton navigation={navigation} />
       <DinoHeader />
 
-      <Text style={styles.trofeo}>
-        🏆
-      </Text>
+      <Image 
+        source={trofeoGif} 
+        style={styles.trofeoGif} 
+        resizeMode="contain"
+      />
 
       <Text style={styles.titulo}>
         ¡FELICIDADES!
@@ -24,10 +28,6 @@ export default function CertificadoScreen({ navigation }) {
 
       <Text style={styles.texto}>
         {nombre ? nombre : "Eres"} un Super Aprendiz
-      </Text>
-
-      <Text style={styles.estrella}>
-        ⭐⭐⭐⭐⭐
       </Text>
 
       <Text style={styles.subtexto}>
@@ -42,15 +42,21 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "#FFFDE7",
+    paddingHorizontal: 20,
   },
 
-  trofeo: {
-    fontSize: 100,
+  trofeoGif: {
+    width: 150,
+    height: 150,
+    marginBottom: 20,
   },
 
   titulo: {
     fontSize: 32,
     fontWeight: "bold",
+    color: "#2E7D32",
+    textAlign: "center",
   },
 
   texto: {
@@ -58,17 +64,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
     textAlign: "center",
     paddingHorizontal: 20,
-  },
-
-  estrella: {
-    fontSize: 35,
-    marginTop: 20,
+    fontWeight: "600",
+    color: "#37474F",
   },
 
   subtexto: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
-    color: "#90A4AE",
-    marginTop: 12,
+    color: "#FF6F00",
+    marginTop: 20,
   },
 });

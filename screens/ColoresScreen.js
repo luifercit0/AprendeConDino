@@ -5,18 +5,16 @@ import StarCounter from "../components/StarCounter";
 import BackToMenuButton from "../components/BackToMenuButton";
 import { ScoreContext } from "../context/ScoreContext";
 
-// Ajusta estas rutas según la ubicación real de tus imágenes
 const botonLPixel = require("../assets/botonLPixel.png");
 
-// Imágenes de colores - AJUSTA ESTAS RUTAS
 const imagenesColores = {
-  rojo: require("../assets/rojo.jpg"),
-  azul: require("../assets/azul.jpg"),
-  amarillo: require("../assets/amarillo.jpg"),
-  verde: require("../assets/verde.jpg"),
-  naranja: require("../assets/naranja.jpg"),
-  morado: require("../assets/morado.jpg"),
-  rosa: require("../assets/rosa.jpg"),
+  rojo: require("../assets/Rojo.png"),
+  azul: require("../assets/Azul.png"),
+  amarillo: require("../assets/Amarillo.png"),
+  verde: require("../assets/Verde.png"),
+  naranja: require("../assets/Naranja.png"),
+  morado: require("../assets/Morado.png"),
+  rosa: require("../assets/Rosa.png"),
 };
 
 export default function ColoresScreen({ navigation }) {
@@ -64,7 +62,7 @@ export default function ColoresScreen({ navigation }) {
       }
     } else {
       setHuboError(true);
-      Alert.alert("¡Casi! 🤭", "¡Inténtalo otra vez, tú puedes!", [{ text: "¡Vale!" }]);
+      Alert.alert("¡Casi!", "¡Inténtalo otra vez, tú puedes!", [{ text: "¡Vale!" }]);
     }
   };
 
@@ -119,8 +117,12 @@ export default function ColoresScreen({ navigation }) {
       <View style={styles.tarjetaCard}>
         <Text style={styles.preguntaTexto}>¿Qué color es este? </Text>
 
-        <View style={styles.contenedorFiguraJuego}>
-          <Image source={datosColorCorrecto.imagen} style={styles.imagenFiguraJuego} resizeMode="cover" />
+        <View style={[styles.contenedorFiguraJuego, { backgroundColor: datosColorCorrecto.hex }]}>
+          <Image 
+            source={datosColorCorrecto.imagen} 
+            style={styles.imagenFiguraJuego} 
+            resizeMode="contain" 
+          />
         </View>
 
         <View style={styles.contenedorOpciones}>
@@ -269,8 +271,8 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   imagenFiguraJuego: {
-    width: "100%",
-    height: "100%",
+    width: "80%",
+    height: "80%",
   },
   contenedorOpciones: {
     width: "100%",

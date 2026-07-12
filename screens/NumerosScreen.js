@@ -26,13 +26,13 @@ const preguntas = [
     imagen: require("../assets/Manzanas.png"),
     objetos: "manzanas",
     correcta: "4",
-    opciones: ["9", "4", "8"],
+    opciones: ["4", "0", "8"],
   },
   {
     imagen: require("../assets/Pinguino.png"),
     objetos: "muñecas",
     correcta: "1",
-    opciones: ["2", "1", "6"],
+    opciones: ["7", "9", "1"],
   }
 ];
 
@@ -46,10 +46,10 @@ export default function NumerosScreen({ navigation }) {
   const verificar = (opcion) => {
     if (opcion === pregunta.correcta) {
       addStar("Numeros");
-      setMensaje("⭐ ¡Correcto!");
+      setMensaje("¡Correcto!");
     } else {
       setHuboError(true);
-      setMensaje("❌ Intenta nuevamente");
+      setMensaje("Intenta nuevamente");
     }
   };
 

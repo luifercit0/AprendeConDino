@@ -22,7 +22,7 @@ const listaDinos = [
   { id: "dino_triceratops", img: require("../assets/dino_triceratops.png"), color: "#FFE0B2" },
   { id: "dino_verde", img: require("../assets/dino_verde.png"), color: "#E8F5E9" },
   { id: "dino_azul_cuello", img: require("../assets/dino_azul_cuello.png"), color: "#E0F7FA" },
-  { id: "dino_chocolate", img: require("../assets/dino_chocolate.jpg"), color: "#E0F2F1" },
+  { id: "dino_chocolate", img: require("../assets/dino_Trex.png"), color: "#E0F2F1" },
 ];
 
 export default function HomeScreen({ navigation }) {
