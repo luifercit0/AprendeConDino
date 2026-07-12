@@ -1,7 +1,10 @@
 import React, { createContext, useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "../services/supabaseClient";
 
 export const UserContext = createContext();
+
+const CLAVE_JUGADOR_LOCAL = "@dino_jugador_id";
 
 export const UserProvider = ({ children }) => {
   const [nombre, setNombre] = useState("");
@@ -13,65 +16,83 @@ export const UserProvider = ({ children }) => {
   const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
-    cargarUltimoJugador();
+    cargarJugadorDeEsteDispositivo();
   }, []);
 
-  const cargarUltimoJugador = async () => {
+  const aplicarDatosDeJugador = async (jugador) => {
+    setJugadorId(jugador.id);
+    setNombre(jugador.nombre);
+    setEdad(jugador.edad != null ? String(jugador.edad) : "");
+    setDinoElegido(jugador.dino_elegido || "dino_verde");
+    setCertificadoObtenido(!!jugador.certificado_obtenido);
+
+    await AsyncStorage.setItem(CLAVE_JUGADOR_LOCAL, String(jugador.id));
+
+    const { data: filasProgreso } = await supabase
+      .from("progreso")
+      .select("estrellas")
+      .eq("jugador_id", jugador.id);
+
+    const total = (filasProgreso || []).reduce((suma, fila) => suma + fila.estrellas, 0);
+    setUltimoPuntaje(total);
+  };
+
+  const cargarJugadorDeEsteDispositivo = async () => {
+    const idGuardadoLocal = await AsyncStorage.getItem(CLAVE_JUGADOR_LOCAL);
+
+    if (!idGuardadoLocal) {
+      setCargando(false);
+      return;
+    }
+
     const { data: jugador, error } = await supabase
       .from("jugadores")
       .select("*")
-      .order("id", { ascending: false })
-      .limit(1)
+      .eq("id", idGuardadoLocal)
       .maybeSingle();
 
     if (jugador && !error) {
-      setJugadorId(jugador.id);
-      setNombre(jugador.nombre);
-      setEdad(jugador.edad != null ? String(jugador.edad) : "");
-      setDinoElegido(jugador.dino_elegido || "dino_verde");
-      setCertificadoObtenido(!!jugador.certificado_obtenido);
-
-      const { data: filasProgreso } = await supabase
-        .from("progreso")
-        .select("estrellas")
-        .eq("jugador_id", jugador.id);
-
-      const total = (filasProgreso || []).reduce((suma, fila) => suma + fila.estrellas, 0);
-      setUltimoPuntaje(total);
+      await aplicarDatosDeJugador(jugador);
+    } else {
+      await AsyncStorage.removeItem(CLAVE_JUGADOR_LOCAL);
     }
 
     setCargando(false);
   };
 
   const registrarJugador = async (nombreNuevo, edadNueva, dinoNuevo) => {
-    if (jugadorId) {
-      await supabase
-        .from("jugadores")
-        .update({
-          nombre: nombreNuevo,
-          edad: Number(edadNueva) || null,
-          dino_elegido: dinoNuevo,
-        })
-        .eq("id", jugadorId);
-    } else {
-      const { data, error } = await supabase
-        .from("jugadores")
-        .insert({
-          nombre: nombreNuevo,
-          edad: Number(edadNueva) || null,
-          dino_elegido: dinoNuevo,
-        })
-        .select()
-        .single();
+    const { data, error } = await supabase
+      .from("jugadores")
+      .insert({
+        nombre: nombreNuevo,
+        edad: Number(edadNueva) || null,
+        dino_elegido: dinoNuevo,
+      })
+      .select()
+      .single();
 
-      if (!error && data) {
-        setJugadorId(data.id);
-      }
+    if (!error && data) {
+      await aplicarDatosDeJugador(data);
+    }
+  };
+
+  const iniciarSesion = async (nombreBuscado, edadBuscada, dinoBuscado) => {
+    const { data: jugador, error } = await supabase
+      .from("jugadores")
+      .select("*")
+      .ilike("nombre", nombreBuscado.trim())
+      .eq("edad", Number(edadBuscada) || null)
+      .eq("dino_elegido", dinoBuscado)
+      .order("id", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (!jugador || error) {
+      return false;
     }
 
-    setNombre(nombreNuevo);
-    setEdad(String(edadNueva));
-    setDinoElegido(dinoNuevo);
+    await aplicarDatosDeJugador(jugador);
+    return true;
   };
 
   const marcarCertificadoObtenido = async () => {
@@ -83,6 +104,16 @@ export const UserProvider = ({ children }) => {
       .eq("id", jugadorId);
 
     setCertificadoObtenido(true);
+  };
+
+  const cerrarSesion = async () => {
+    await AsyncStorage.removeItem(CLAVE_JUGADOR_LOCAL);
+    setJugadorId(null);
+    setNombre("");
+    setEdad("");
+    setDinoElegido("dino_verde");
+    setUltimoPuntaje(0);
+    setCertificadoObtenido(false);
   };
 
   return (
@@ -100,6 +131,8 @@ export const UserProvider = ({ children }) => {
         marcarCertificadoObtenido,
         cargando,
         registrarJugador,
+        iniciarSesion,
+        cerrarSesion,
       }}
     >
       {children}

@@ -21,21 +21,21 @@ const preguntas = [
     imagen: require("../assets/avion.png"),
     palabra: "Avión",
     correcta: "A",
-    opciones: ["A", "M", "P"],
+    opciones: ["D", "A", "P"],
   },
   {
     letra: "B",
     imagen: require("../assets/Barco.png"),
     palabra: "Barco",
     correcta: "B",
-    opciones: ["B", "R", "T"],
+    opciones: ["F", "O", "B"],
   },
   {
     letra: "C",
     imagen: require("../assets/Casa.png"),
     palabra: "Casa",
     correcta: "C",
-    opciones: ["C", "D", "F"],
+    opciones: ["H", "C", "L"],
   }
 ];
 
@@ -49,10 +49,10 @@ export default function LetrasScreen({ navigation }) {
   const verificar = (opcion) => {
     if (opcion === pregunta.correcta) {
       addStar("Letras");
-      setMensaje("⭐ ¡Correcto!");
+      setMensaje("¡Correcto!");
     } else {
       setHuboError(true);
-      setMensaje("❌ Intenta nuevamente");
+      setMensaje("Intenta nuevamente");
     }
   };
 

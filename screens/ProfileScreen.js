@@ -15,7 +15,7 @@ export default function ProfileScreen() {
     dino_triceratops: require("../assets/dino_triceratops.png"),
     dino_verde: require("../assets/dino_verde.png"),
     dino_azul_cuello: require("../assets/dino_azul_cuello.png"),
-    dino_chocolate: require("../assets/dino_chocolate.jpg"),
+    dino_chocolate: require("../assets/dino_Trex.png"),
   };
 
   const estrellaGif = require("../assets/estrella.gif");
@@ -37,7 +37,7 @@ export default function ProfileScreen() {
     >
       <DinoHeader />
       
-      <Text style={styles.titulo}>Mi Perfil de Explorador</Text>
+      <Text style={styles.titulo}>Mi Perfil</Text>
 
       <View style={styles.tarjetaPerfil}>
         <View style={[styles.avatarContainer, { backgroundColor: colorRango + "15" }]}>
